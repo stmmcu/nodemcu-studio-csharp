@@ -23,6 +23,14 @@ namespace NodeMCU_Studio_2015
             currentSP = new SP();
         }
 
+        private void TriggerIsOpenChanged()
+        {
+            if (IsOpenChanged != null)
+            {
+                IsOpenChanged(currentSP.IsOpen);
+            }
+        }
+
         public string[] GetPortNames()
         {
             return SP.GetPortNames();
@@ -33,6 +41,10 @@ namespace NodeMCU_Studio_2015
             if (currentSP.IsOpen)
             {
                 currentSP.Close();
+                if (IsOpenChanged != null)
+                {
+                    IsOpenChanged(currentSP.IsOpen);
+                }
             }
         }
 
@@ -43,6 +55,10 @@ namespace NodeMCU_Studio_2015
             currentSP.ReadTimeout = 0;
             currentSP.PortName = port;
             currentSP.Open();
+            if (IsOpenChanged != null)
+            {
+                IsOpenChanged(currentSP.IsOpen);
+            }
             return currentSP.IsOpen;
         }
 
@@ -74,5 +90,7 @@ namespace NodeMCU_Studio_2015
         {
             currentSP.Dispose();
         }
+
+        public event Action<bool> IsOpenChanged;
     }
 }

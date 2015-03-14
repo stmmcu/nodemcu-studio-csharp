@@ -89,6 +89,7 @@
             this.toolStripRescanButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripDownloadButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripRunButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripCloseButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -118,6 +119,7 @@
             this.clImage = new System.Windows.Forms.DataGridViewImageColumn();
             this.clName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ilAutocomplete = new System.Windows.Forms.ImageList(this.components);
+            this.closeSerialPortConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.msMain.SuspendLayout();
             this.ssMain.SuspendLayout();
             this.tsMain.SuspendLayout();
@@ -297,7 +299,8 @@
             this.deviceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.rescanToolStripMenuItem,
             this.executeToolStripMenuItem,
-            this.executeToolStripMenuItem1});
+            this.executeToolStripMenuItem1,
+            this.closeSerialPortConnectionToolStripMenuItem});
             this.deviceToolStripMenuItem.Name = "deviceToolStripMenuItem";
             this.deviceToolStripMenuItem.Size = new System.Drawing.Size(58, 21);
             this.deviceToolStripMenuItem.Text = "Device";
@@ -435,7 +438,8 @@
             this.toolStripComboBoxSerialPort,
             this.toolStripRescanButton,
             this.toolStripDownloadButton,
-            this.toolStripRunButton});
+            this.toolStripRunButton,
+            this.toolStripCloseButton});
             this.tsMain.Location = new System.Drawing.Point(0, 25);
             this.tsMain.Name = "tsMain";
             this.tsMain.Size = new System.Drawing.Size(871, 25);
@@ -688,6 +692,16 @@
             this.toolStripRunButton.ToolTipText = "Run";
             this.toolStripRunButton.Click += new System.EventHandler(this.toolStripRunButton_Click);
             // 
+            // toolStripCloseButton
+            // 
+            this.toolStripCloseButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripCloseButton.Image = global::NodeMCU_Studio_2015.Properties.Resources.close;
+            this.toolStripCloseButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripCloseButton.Name = "toolStripCloseButton";
+            this.toolStripCloseButton.Size = new System.Drawing.Size(23, 22);
+            this.toolStripCloseButton.ToolTipText = "Close Serial Port Connection";
+            this.toolStripCloseButton.Click += new System.EventHandler(this.toolStripCloseButton_Click);
+            // 
             // toolStripSeparator
             // 
             this.toolStripSeparator.Name = "toolStripSeparator";
@@ -924,6 +938,13 @@
             this.ilAutocomplete.Images.SetKeyName(1, "app_16x16.png");
             this.ilAutocomplete.Images.SetKeyName(2, "1302166543_virtualbox.png");
             // 
+            // closeSerialPortConnectionToolStripMenuItem
+            // 
+            this.closeSerialPortConnectionToolStripMenuItem.Image = global::NodeMCU_Studio_2015.Properties.Resources.close;
+            this.closeSerialPortConnectionToolStripMenuItem.Name = "closeSerialPortConnectionToolStripMenuItem";
+            this.closeSerialPortConnectionToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.closeSerialPortConnectionToolStripMenuItem.Text = "Close Serial Port Connection";
+            // 
             // PowerfulLuaEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1044,5 +1065,7 @@
         private System.Windows.Forms.ToolStripMenuItem showFoldingLineToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem executeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem executeToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripButton toolStripCloseButton;
+        private System.Windows.Forms.ToolStripMenuItem closeSerialPortConnectionToolStripMenuItem;
     }
 }

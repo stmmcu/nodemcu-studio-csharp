@@ -26,7 +26,6 @@ namespace NodeMCU_Studio_2015
 
         System.Windows.Window parent;
 
-
         public PowerfulLuaEditor(System.Windows.Window parent)
         {
             InitializeComponent();
@@ -45,6 +44,14 @@ namespace NodeMCU_Studio_2015
             this.parent = parent;
 
             RefreshSerialPort();
+
+            SerialPort.GetInstance().IsOpenChanged += PowerfulLuaEditor_IsOpenChanged;
+        }
+
+        private void PowerfulLuaEditor_IsOpenChanged(bool isOpen)
+        {
+            closeSerialPortConnectionToolStripMenuItem.Enabled = isOpen;
+            toolStripCloseButton.Enabled = isOpen;
         }
 
         private void ByteArrayToList(byte[] array, List<string> list)
@@ -1071,6 +1078,11 @@ namespace NodeMCU_Studio_2015
                     toolStripRunButton.Enabled = true;
                 }, null);
             }).Start();
+        }
+
+        private void toolStripCloseButton_Click(object sender, EventArgs e)
+        {
+            SerialPort.GetInstance().Close();
         }
     }
 
