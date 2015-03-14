@@ -1,0 +1,9 @@
+if ^ then\n\nend
+if ^ then\n\nelseif  then\n\nend
+if ^ then\n\nelseif  then\n\nelse\n\nend
+repeat ^\n\nuntil 
+::^::
+for ^ = , do\n\nend
+for ^ in do\n\nend
+while ^ do\n\nend
+do\n\nend

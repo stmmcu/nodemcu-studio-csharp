@@ -1,0 +1,4 @@
+node.info()
+node.dsleep()
+node.chipid()
+node.flashid()
