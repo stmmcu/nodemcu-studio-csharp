@@ -84,10 +84,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CustomHeader.xaml.cs">
-      <DependentUpon>CustomHeader.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="CustomTab.cs" />
     <Compile Include="PowerfulLuaEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -104,10 +100,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="CustomHeader.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="StartScreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -149,8 +141,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="PanoramaBackground.png" />
-    <None Include="Resources\edit_padding_top.png" />
-    <None Include="Resources\keyword.setting" />
     <None Include="Resources\layer_plus.png" />
     <None Include="Resources\layer_minus.png" />
     <Resource Include="三角.png" />
@@ -171,7 +161,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Refresh.ico" />
+    <None Include="Resources\Refresh.png" />
+    <None Include="Resources\34-refresh.png" />
+    <None Include="Resources\download.png" />
     <Content Include="TabStrip.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

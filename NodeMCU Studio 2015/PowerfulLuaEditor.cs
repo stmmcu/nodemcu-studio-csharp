@@ -43,6 +43,8 @@ namespace NodeMCU_Studio_2015
             ByteArrayToList(Properties.Resources.snippets, snippets);
 
             this.parent = parent;
+
+            RefreshSerialPort();
         }
 
         private void ByteArrayToList(byte[] array, List<string> list)
@@ -915,6 +917,81 @@ namespace NodeMCU_Studio_2015
         {
             if (CurrentTB != null)
                 CurrentTB.Zoom = int.Parse((sender as ToolStripItem).Tag.ToString());
+        }
+
+        private void toolStripRefreshButton_Click(object sender, EventArgs e)
+        {
+            RefreshSerialPort();
+        }
+
+        private void toolStripDownloadButton_Click(object sender, EventArgs e)
+        {
+            int index = toolStripComboBoxSerialPort.SelectedIndex;
+            if (index < 0)
+            {
+                MessageBox.Show("No serial port selected!");
+                return;
+            }
+
+            if (tsFiles.SelectedItem == null)
+            {
+                MessageBox.Show("No file selected!");
+                return;
+            }
+
+            string[] ports = toolStripComboBoxSerialPort.ComboBox.DataSource as string[];
+            toolStripDownloadButton.Enabled = false;
+            SynchronizationContext context = SynchronizationContext.Current;
+
+            new System.Threading.Thread(() =>
+            {
+                try
+                {
+                    string filename = System.IO.Path.GetFileName(tsFiles.SelectedItem.Tag as string);
+                    if (!SerialPort.GetInstance().Open(ports[index]))
+                    {
+                        MessageBox.Show("Cannot connect to device.");
+                    } else if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("file.remove(\"{0}\")", filename)))
+                    {
+                        MessageBox.Show("Download to device failed.");
+                    }
+                    else if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("file.open(\"{0}\")", filename)))
+                    {
+                        MessageBox.Show("Download to device failed.");
+                    }
+                    else
+                    {
+                        foreach (var line in CurrentTB.Text.Split('\n'))
+                        {
+                            if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("file.writeline(\"{0}\")", System.Text.RegularExpressions.Regex.Escape(line))))
+                            {
+                                MessageBox.Show("Download to device failed.");
+                                break;
+                            }
+                        }
+
+                        if (!SerialPort.GetInstance().ExecuteAndWait("file.close()"))
+                        {
+                            MessageBox.Show("Download to device failed.");
+                        } else {
+                            MessageBox.Show("Download to device succeeded.");
+                        }
+                    }
+                } catch
+                {
+                    MessageBox.Show("Download to device failed.");
+                }
+
+                context.Post((_) =>
+                {
+                    toolStripDownloadButton.Enabled = true;
+                }, null);
+            }).Start();
+        }
+
+        private void RefreshSerialPort()
+        {
+            toolStripComboBoxSerialPort.ComboBox.DataSource = SerialPort.GetInstance().GetPortNames();
         }
     }
 

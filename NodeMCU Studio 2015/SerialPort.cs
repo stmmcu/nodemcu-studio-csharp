@@ -46,19 +46,19 @@ namespace NodeMCU_Studio_2015
             return currentSP.IsOpen;
         }
 
-        public void ExecuteAndWait(string command)
+        public bool ExecuteAndWait(string command)
         {
             currentSP.WriteLine(command);
             for (var i = 0;i < MAX_RETRIES;i++)
             {
                 string s = currentSP.ReadExisting();
-                if (s.Contains("\r\n>"))
+                if (s.Contains(">"))
                 {
-                    return ;
+                    return true;
                 }
-                NativeMethods.Sleep(0);
+                NativeMethods.Sleep(100);
             }
-            MessageBox.Show("Cannot execute command " + command);
+            return false;
         }
 
         public static SerialPort GetInstance()
