@@ -23,6 +23,7 @@ namespace NodeMCU_Studio_2015
         Style invisibleCharsStyle = new InvisibleCharsRenderer(Pens.Gray);
         Color currentLineColor = Color.FromArgb(100, 210, 210, 255);
         Color changedLineColor = Color.FromArgb(255, 230, 230, 255);
+        SynchronizationContext context;
 
         System.Windows.Window parent;
 
@@ -43,15 +44,22 @@ namespace NodeMCU_Studio_2015
 
             this.parent = parent;
 
+            context = SynchronizationContext.Current;
+
             RefreshSerialPort();
 
             SerialPort.GetInstance().IsOpenChanged += PowerfulLuaEditor_IsOpenChanged;
+            PowerfulLuaEditor_IsOpenChanged(false);
         }
 
         private void PowerfulLuaEditor_IsOpenChanged(bool isOpen)
         {
-            closeSerialPortConnectionToolStripMenuItem.Enabled = isOpen;
-            toolStripCloseButton.Enabled = isOpen;
+            context.Post((_) =>
+            {
+                closeSerialPortConnectionToolStripMenuItem.Enabled = isOpen;
+                toolStripCloseButton.Enabled = isOpen;
+            }, null);
+            
         }
 
         private void ByteArrayToList(byte[] array, List<string> list)
@@ -975,14 +983,14 @@ namespace NodeMCU_Studio_2015
             string[] ports = toolStripComboBoxSerialPort.ComboBox.DataSource as string[];
             toolStripDownloadButton.Enabled = false;
             toolStripRunButton.Enabled = false;
-            SynchronizationContext context = SynchronizationContext.Current;
+            string filename = System.IO.Path.GetFileName(tsFiles.SelectedItem.Tag as string);
+            string port = ports[index];
 
             new System.Threading.Thread(() =>
             {
                 try
                 {
-                    string filename = System.IO.Path.GetFileName(tsFiles.SelectedItem.Tag as string);
-                    if (!SerialPort.GetInstance().Open(ports[index]))
+                    if (!SerialPort.GetInstance().Open(port))
                     {
                         MessageBox.Show("Cannot connect to device.");
                     } else if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("file.remove(\"{0}\")", filename)))
@@ -1047,14 +1055,14 @@ namespace NodeMCU_Studio_2015
             string[] ports = toolStripComboBoxSerialPort.ComboBox.DataSource as string[];
             toolStripDownloadButton.Enabled = false;
             toolStripRunButton.Enabled = false;
-            SynchronizationContext context = SynchronizationContext.Current;
+            string filename = System.IO.Path.GetFileName(tsFiles.SelectedItem.Tag as string);
+            string port = ports[index];
 
             new System.Threading.Thread(() =>
             {
                 try
                 {
-                    string filename = System.IO.Path.GetFileName(tsFiles.SelectedItem.Tag as string);
-                    if (!SerialPort.GetInstance().Open(ports[index]))
+                    if (!SerialPort.GetInstance().Open(port))
                     {
                         MessageBox.Show("Cannot connect to device.");
                     }

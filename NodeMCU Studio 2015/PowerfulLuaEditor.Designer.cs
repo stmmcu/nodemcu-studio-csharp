@@ -52,6 +52,7 @@
             this.rescanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.executeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.executeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.closeSerialPortConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ssMain = new System.Windows.Forms.StatusStrip();
             this.lbWordUnderMouse = new System.Windows.Forms.ToolStripStatusLabel();
             this.btZoom = new System.Windows.Forms.ToolStripSplitButton();
@@ -119,7 +120,6 @@
             this.clImage = new System.Windows.Forms.DataGridViewImageColumn();
             this.clName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ilAutocomplete = new System.Windows.Forms.ImageList(this.components);
-            this.closeSerialPortConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.msMain.SuspendLayout();
             this.ssMain.SuspendLayout();
             this.tsMain.SuspendLayout();
@@ -309,22 +309,29 @@
             // 
             this.rescanToolStripMenuItem.Image = global::NodeMCU_Studio_2015.Properties.Resources.refresh;
             this.rescanToolStripMenuItem.Name = "rescanToolStripMenuItem";
-            this.rescanToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.rescanToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.rescanToolStripMenuItem.Text = "Rescan";
             // 
             // executeToolStripMenuItem
             // 
             this.executeToolStripMenuItem.Image = global::NodeMCU_Studio_2015.Properties.Resources.download;
             this.executeToolStripMenuItem.Name = "executeToolStripMenuItem";
-            this.executeToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.executeToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.executeToolStripMenuItem.Text = "Download";
             // 
             // executeToolStripMenuItem1
             // 
             this.executeToolStripMenuItem1.Image = global::NodeMCU_Studio_2015.Properties.Resources.run;
             this.executeToolStripMenuItem1.Name = "executeToolStripMenuItem1";
-            this.executeToolStripMenuItem1.Size = new System.Drawing.Size(135, 22);
+            this.executeToolStripMenuItem1.Size = new System.Drawing.Size(241, 22);
             this.executeToolStripMenuItem1.Text = "Execute";
+            // 
+            // closeSerialPortConnectionToolStripMenuItem
+            // 
+            this.closeSerialPortConnectionToolStripMenuItem.Image = global::NodeMCU_Studio_2015.Properties.Resources.close;
+            this.closeSerialPortConnectionToolStripMenuItem.Name = "closeSerialPortConnectionToolStripMenuItem";
+            this.closeSerialPortConnectionToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.closeSerialPortConnectionToolStripMenuItem.Text = "Close Serial Port Connection";
             // 
             // ssMain
             // 
@@ -938,13 +945,6 @@
             this.ilAutocomplete.Images.SetKeyName(1, "app_16x16.png");
             this.ilAutocomplete.Images.SetKeyName(2, "1302166543_virtualbox.png");
             // 
-            // closeSerialPortConnectionToolStripMenuItem
-            // 
-            this.closeSerialPortConnectionToolStripMenuItem.Image = global::NodeMCU_Studio_2015.Properties.Resources.close;
-            this.closeSerialPortConnectionToolStripMenuItem.Name = "closeSerialPortConnectionToolStripMenuItem";
-            this.closeSerialPortConnectionToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
-            this.closeSerialPortConnectionToolStripMenuItem.Text = "Close Serial Port Connection";
-            // 
             // PowerfulLuaEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -956,6 +956,7 @@
             this.Controls.Add(this.tsMain);
             this.Controls.Add(this.msMain);
             this.Controls.Add(this.ssMain);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.msMain;
             this.Name = "PowerfulLuaEditor";
             this.Text = "NodeMCU Studio 2015";
