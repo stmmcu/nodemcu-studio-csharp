@@ -805,6 +805,14 @@ namespace NodeMCU_Studio_2015
 
         private void btInvisibleChars_Click(object sender, EventArgs e)
         {
+            if (sender == btInvisibleChars)
+            {
+                invisibleCharsToolStripMenuItem.Checked = btInvisibleChars.Checked;
+            } else if (sender == invisibleCharsToolStripMenuItem)
+            {
+                btInvisibleChars.Checked = invisibleCharsToolStripMenuItem.Checked;
+            }
+
             foreach (FATabStripItem tab in tsFiles.Items)
                 HighlightInvisibleChars((tab.Controls[0] as FastColoredTextBox).Range);
             if (CurrentTB!=null)
@@ -813,6 +821,15 @@ namespace NodeMCU_Studio_2015
 
         private void btHighlightCurrentLine_Click(object sender, EventArgs e)
         {
+            if (sender == btHighlightCurrentLine)
+            {
+                highlightCurrentLineToolStripMenuItem.Checked = btHighlightCurrentLine.Checked;
+            }
+            else if (sender == invisibleCharsToolStripMenuItem)
+            {
+                btHighlightCurrentLine.Checked = highlightCurrentLineToolStripMenuItem.Checked;
+            }
+
             foreach (FATabStripItem tab in tsFiles.Items)
             {
                 if (btHighlightCurrentLine.Checked)
@@ -907,6 +924,15 @@ namespace NodeMCU_Studio_2015
 
         private void btShowFoldingLines_Click(object sender, EventArgs e)
         {
+            if (sender == btShowFoldingLines)
+            {
+                showFoldingLineToolStripMenuItem.Checked = btShowFoldingLines.Checked;
+            }
+            else if (sender == invisibleCharsToolStripMenuItem)
+            {
+                btShowFoldingLines.Checked = showFoldingLineToolStripMenuItem.Checked;
+            }
+
             foreach (FATabStripItem tab in tsFiles.Items)
                 (tab.Controls[0] as FastColoredTextBox).ShowFoldingLines = btShowFoldingLines.Checked;
             if (CurrentTB != null)
@@ -919,7 +945,7 @@ namespace NodeMCU_Studio_2015
                 CurrentTB.Zoom = int.Parse((sender as ToolStripItem).Tag.ToString());
         }
 
-        private void toolStripRefreshButton_Click(object sender, EventArgs e)
+        private void toolStripRescanButton_Click(object sender, EventArgs e)
         {
             RefreshSerialPort();
         }
@@ -941,6 +967,7 @@ namespace NodeMCU_Studio_2015
 
             string[] ports = toolStripComboBoxSerialPort.ComboBox.DataSource as string[];
             toolStripDownloadButton.Enabled = false;
+            toolStripRunButton.Enabled = false;
             SynchronizationContext context = SynchronizationContext.Current;
 
             new System.Threading.Thread(() =>
@@ -985,6 +1012,7 @@ namespace NodeMCU_Studio_2015
                 context.Post((_) =>
                 {
                     toolStripDownloadButton.Enabled = true;
+                    toolStripRunButton.Enabled = true;
                 }, null);
             }).Start();
         }
@@ -992,6 +1020,57 @@ namespace NodeMCU_Studio_2015
         private void RefreshSerialPort()
         {
             toolStripComboBoxSerialPort.ComboBox.DataSource = SerialPort.GetInstance().GetPortNames();
+        }
+
+        private void toolStripRunButton_Click(object sender, EventArgs e)
+        {
+            int index = toolStripComboBoxSerialPort.SelectedIndex;
+            if (index < 0)
+            {
+                MessageBox.Show("No serial port selected!");
+                return;
+            }
+
+            if (tsFiles.SelectedItem == null)
+            {
+                MessageBox.Show("No file selected!");
+                return;
+            }
+
+            string[] ports = toolStripComboBoxSerialPort.ComboBox.DataSource as string[];
+            toolStripDownloadButton.Enabled = false;
+            toolStripRunButton.Enabled = false;
+            SynchronizationContext context = SynchronizationContext.Current;
+
+            new System.Threading.Thread(() =>
+            {
+                try
+                {
+                    string filename = System.IO.Path.GetFileName(tsFiles.SelectedItem.Tag as string);
+                    if (!SerialPort.GetInstance().Open(ports[index]))
+                    {
+                        MessageBox.Show("Cannot connect to device.");
+                    }
+                    else if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("dofile(\"{0}\")", filename)))
+                    {
+                        MessageBox.Show("Execute failed.");
+                    }
+                    else 
+                    {
+                        MessageBox.Show("Execute succeeded.");
+                    }
+                }
+                catch
+                {
+                    MessageBox.Show("Execute failed.");
+                }
+
+                context.Post((_) =>
+                {
+                    toolStripDownloadButton.Enabled = true;
+                    toolStripRunButton.Enabled = true;
+                }, null);
+            }).Start();
         }
     }
 

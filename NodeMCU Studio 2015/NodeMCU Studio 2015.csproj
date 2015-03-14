@@ -164,6 +164,7 @@
     <None Include="Resources\Refresh.png" />
     <None Include="Resources\34-refresh.png" />
     <None Include="Resources\download.png" />
+    <None Include="Resources\run.png" />
     <Content Include="TabStrip.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

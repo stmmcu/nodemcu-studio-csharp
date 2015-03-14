@@ -46,7 +46,12 @@
             this.redoToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.invisibleCharsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.highlightCurrentLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showFoldingLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deviceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rescanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.executeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.executeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.ssMain = new System.Windows.Forms.StatusStrip();
             this.lbWordUnderMouse = new System.Windows.Forms.ToolStripStatusLabel();
             this.btZoom = new System.Windows.Forms.ToolStripSplitButton();
@@ -81,8 +86,9 @@
             this.bookmarkMinusButton = new System.Windows.Forms.ToolStripButton();
             this.gotoButton = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripComboBoxSerialPort = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripRefreshButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripRescanButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripDownloadButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripRunButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -148,44 +154,49 @@
             // 
             // newToolStripMenuItem
             // 
+            this.newToolStripMenuItem.Image = global::NodeMCU_Studio_2015.Properties.Resources.newToolStripButton_Image;
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.newToolStripMenuItem.Text = "New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem
             // 
+            this.openToolStripMenuItem.Image = global::NodeMCU_Studio_2015.Properties.Resources.openToolStripButton_Image;
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
+            this.saveToolStripMenuItem.Image = global::NodeMCU_Studio_2015.Properties.Resources.saveToolStripButton_Image;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeyDisplayString = "";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.saveAsToolStripMenuItem.Text = "Save as ...";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(144, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(152, 6);
             // 
             // quitToolStripMenuItem
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
             this.quitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.quitToolStripMenuItem.Text = "Exit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
@@ -203,38 +214,55 @@
             // 
             // cutToolStripMenuItem1
             // 
+            this.cutToolStripMenuItem1.Image = global::NodeMCU_Studio_2015.Properties.Resources.cutToolStripButton_Image;
             this.cutToolStripMenuItem1.Name = "cutToolStripMenuItem1";
-            this.cutToolStripMenuItem1.Size = new System.Drawing.Size(108, 22);
+            this.cutToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.X)));
+            this.cutToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.cutToolStripMenuItem1.Text = "Cut";
+            this.cutToolStripMenuItem1.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
             // 
             // copyToolStripMenuItem1
             // 
+            this.copyToolStripMenuItem1.Image = global::NodeMCU_Studio_2015.Properties.Resources.copyToolStripButton_Image;
             this.copyToolStripMenuItem1.Name = "copyToolStripMenuItem1";
-            this.copyToolStripMenuItem1.Size = new System.Drawing.Size(108, 22);
+            this.copyToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.copyToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.copyToolStripMenuItem1.Text = "Copy";
+            this.copyToolStripMenuItem1.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
             // 
             // pasteToolStripMenuItem1
             // 
+            this.pasteToolStripMenuItem1.Image = global::NodeMCU_Studio_2015.Properties.Resources.pasteToolStripButton_Image;
             this.pasteToolStripMenuItem1.Name = "pasteToolStripMenuItem1";
-            this.pasteToolStripMenuItem1.Size = new System.Drawing.Size(108, 22);
+            this.pasteToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+            this.pasteToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.pasteToolStripMenuItem1.Text = "Paste";
+            this.pasteToolStripMenuItem1.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
             // 
             // undoToolStripMenuItem1
             // 
+            this.undoToolStripMenuItem1.Image = global::NodeMCU_Studio_2015.Properties.Resources.undo_16x16;
             this.undoToolStripMenuItem1.Name = "undoToolStripMenuItem1";
-            this.undoToolStripMenuItem1.Size = new System.Drawing.Size(108, 22);
+            this.undoToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
+            this.undoToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.undoToolStripMenuItem1.Text = "Undo";
+            this.undoToolStripMenuItem1.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
             // 
             // redoToolStripMenuItem1
             // 
+            this.redoToolStripMenuItem1.Image = global::NodeMCU_Studio_2015.Properties.Resources.redo_16x16;
             this.redoToolStripMenuItem1.Name = "redoToolStripMenuItem1";
-            this.redoToolStripMenuItem1.Size = new System.Drawing.Size(108, 22);
+            this.redoToolStripMenuItem1.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Y)));
+            this.redoToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.redoToolStripMenuItem1.Text = "Redo";
+            this.redoToolStripMenuItem1.Click += new System.EventHandler(this.redoToolStripMenuItem_Click);
             // 
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.invisibleCharsToolStripMenuItem});
+            this.invisibleCharsToolStripMenuItem,
+            this.highlightCurrentLineToolStripMenuItem,
+            this.showFoldingLineToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(47, 21);
             this.viewToolStripMenuItem.Text = "View";
@@ -243,14 +271,57 @@
             // 
             this.invisibleCharsToolStripMenuItem.CheckOnClick = true;
             this.invisibleCharsToolStripMenuItem.Name = "invisibleCharsToolStripMenuItem";
-            this.invisibleCharsToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.invisibleCharsToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
             this.invisibleCharsToolStripMenuItem.Text = "Invisible Chars";
+            this.invisibleCharsToolStripMenuItem.Click += new System.EventHandler(this.btInvisibleChars_Click);
+            // 
+            // highlightCurrentLineToolStripMenuItem
+            // 
+            this.highlightCurrentLineToolStripMenuItem.CheckOnClick = true;
+            this.highlightCurrentLineToolStripMenuItem.Image = global::NodeMCU_Studio_2015.Properties.Resources.edit_padding_top;
+            this.highlightCurrentLineToolStripMenuItem.Name = "highlightCurrentLineToolStripMenuItem";
+            this.highlightCurrentLineToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.highlightCurrentLineToolStripMenuItem.Text = "Highlight Current Line";
+            this.highlightCurrentLineToolStripMenuItem.Click += new System.EventHandler(this.btHighlightCurrentLine_Click);
+            // 
+            // showFoldingLineToolStripMenuItem
+            // 
+            this.showFoldingLineToolStripMenuItem.Image = global::NodeMCU_Studio_2015.Properties.Resources.btShowFoldingLines_Image;
+            this.showFoldingLineToolStripMenuItem.Name = "showFoldingLineToolStripMenuItem";
+            this.showFoldingLineToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
+            this.showFoldingLineToolStripMenuItem.Text = "Show Folding Lines";
+            this.showFoldingLineToolStripMenuItem.Click += new System.EventHandler(this.btShowFoldingLines_Click);
             // 
             // deviceToolStripMenuItem
             // 
+            this.deviceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.rescanToolStripMenuItem,
+            this.executeToolStripMenuItem,
+            this.executeToolStripMenuItem1});
             this.deviceToolStripMenuItem.Name = "deviceToolStripMenuItem";
             this.deviceToolStripMenuItem.Size = new System.Drawing.Size(58, 21);
             this.deviceToolStripMenuItem.Text = "Device";
+            // 
+            // rescanToolStripMenuItem
+            // 
+            this.rescanToolStripMenuItem.Image = global::NodeMCU_Studio_2015.Properties.Resources.refresh;
+            this.rescanToolStripMenuItem.Name = "rescanToolStripMenuItem";
+            this.rescanToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.rescanToolStripMenuItem.Text = "Rescan";
+            // 
+            // executeToolStripMenuItem
+            // 
+            this.executeToolStripMenuItem.Image = global::NodeMCU_Studio_2015.Properties.Resources.download;
+            this.executeToolStripMenuItem.Name = "executeToolStripMenuItem";
+            this.executeToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.executeToolStripMenuItem.Text = "Download";
+            // 
+            // executeToolStripMenuItem1
+            // 
+            this.executeToolStripMenuItem1.Image = global::NodeMCU_Studio_2015.Properties.Resources.run;
+            this.executeToolStripMenuItem1.Name = "executeToolStripMenuItem1";
+            this.executeToolStripMenuItem1.Size = new System.Drawing.Size(135, 22);
+            this.executeToolStripMenuItem1.Text = "Execute";
             // 
             // ssMain
             // 
@@ -362,8 +433,9 @@
             this.bookmarkMinusButton,
             this.gotoButton,
             this.toolStripComboBoxSerialPort,
-            this.toolStripRefreshButton,
-            this.toolStripDownloadButton});
+            this.toolStripRescanButton,
+            this.toolStripDownloadButton,
+            this.toolStripRunButton});
             this.tsMain.Location = new System.Drawing.Point(0, 25);
             this.tsMain.Name = "tsMain";
             this.tsMain.Size = new System.Drawing.Size(871, 25);
@@ -586,15 +658,15 @@
             this.toolStripComboBoxSerialPort.Size = new System.Drawing.Size(121, 25);
             this.toolStripComboBoxSerialPort.ToolTipText = "Serial Ports";
             // 
-            // toolStripRefreshButton
+            // toolStripRescanButton
             // 
-            this.toolStripRefreshButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripRefreshButton.Image = global::NodeMCU_Studio_2015.Properties.Resources.refresh;
-            this.toolStripRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripRefreshButton.Name = "toolStripRefreshButton";
-            this.toolStripRefreshButton.Size = new System.Drawing.Size(23, 22);
-            this.toolStripRefreshButton.ToolTipText = "Refresh";
-            this.toolStripRefreshButton.Click += new System.EventHandler(this.toolStripRefreshButton_Click);
+            this.toolStripRescanButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripRescanButton.Image = global::NodeMCU_Studio_2015.Properties.Resources.refresh;
+            this.toolStripRescanButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripRescanButton.Name = "toolStripRescanButton";
+            this.toolStripRescanButton.Size = new System.Drawing.Size(23, 22);
+            this.toolStripRescanButton.ToolTipText = "Rescan";
+            this.toolStripRescanButton.Click += new System.EventHandler(this.toolStripRescanButton_Click);
             // 
             // toolStripDownloadButton
             // 
@@ -605,6 +677,16 @@
             this.toolStripDownloadButton.Size = new System.Drawing.Size(23, 22);
             this.toolStripDownloadButton.ToolTipText = "Download";
             this.toolStripDownloadButton.Click += new System.EventHandler(this.toolStripDownloadButton_Click);
+            // 
+            // toolStripRunButton
+            // 
+            this.toolStripRunButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripRunButton.Image = global::NodeMCU_Studio_2015.Properties.Resources.run;
+            this.toolStripRunButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripRunButton.Name = "toolStripRunButton";
+            this.toolStripRunButton.Size = new System.Drawing.Size(23, 22);
+            this.toolStripRunButton.ToolTipText = "Run";
+            this.toolStripRunButton.Click += new System.EventHandler(this.toolStripRunButton_Click);
             // 
             // toolStripSeparator
             // 
@@ -954,7 +1036,13 @@
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem invisibleCharsToolStripMenuItem;
         private System.Windows.Forms.ToolStripComboBox toolStripComboBoxSerialPort;
-        private System.Windows.Forms.ToolStripButton toolStripRefreshButton;
+        private System.Windows.Forms.ToolStripButton toolStripRescanButton;
         private System.Windows.Forms.ToolStripButton toolStripDownloadButton;
+        private System.Windows.Forms.ToolStripMenuItem rescanToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton toolStripRunButton;
+        private System.Windows.Forms.ToolStripMenuItem highlightCurrentLineToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showFoldingLineToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem executeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem executeToolStripMenuItem1;
     }
 }
