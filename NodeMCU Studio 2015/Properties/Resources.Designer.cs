@@ -83,6 +83,36 @@ namespace NodeMCU_Studio_2015.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap btInvisibleChars_Image {
+            get {
+                object obj = ResourceManager.GetObject("btInvisibleChars_Image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap btShowFoldingLines_Image {
+            get {
+                object obj = ResourceManager.GetObject("btShowFoldingLines_Image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap btZoom_Image {
+            get {
+                object obj = ResourceManager.GetObject("btZoom_Image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap bye {
             get {
                 object obj = ResourceManager.GetObject("bye", resourceCulture);
@@ -96,6 +126,56 @@ namespace NodeMCU_Studio_2015.Properties {
         internal static System.Drawing.Bitmap class_libraries {
             get {
                 object obj = ResourceManager.GetObject("class_libraries", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Boolean similar to True.
+        /// </summary>
+        internal static bool clImage_UserAddedColumn {
+            get {
+                object obj = ResourceManager.GetObject("clImage_UserAddedColumn", resourceCulture);
+                return ((bool)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Boolean similar to True.
+        /// </summary>
+        internal static bool clName_UserAddedColumn {
+            get {
+                object obj = ResourceManager.GetObject("clName_UserAddedColumn", resourceCulture);
+                return ((bool)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Point similar to {X=528,Y=17}.
+        /// </summary>
+        internal static System.Drawing.Point cmMain_TrayLocation {
+            get {
+                object obj = ResourceManager.GetObject("cmMain_TrayLocation", resourceCulture);
+                return ((System.Drawing.Point)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap copyToolStripButton_Image {
+            get {
+                object obj = ResourceManager.GetObject("copyToolStripButton_Image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap cutToolStripButton_Image {
+            get {
+                object obj = ResourceManager.GetObject("cutToolStripButton_Image", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -117,6 +197,36 @@ namespace NodeMCU_Studio_2015.Properties {
             get {
                 object obj = ResourceManager.GetObject("forward_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap gotoButton_Image {
+            get {
+                object obj = ResourceManager.GetObject("gotoButton_Image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Windows.Forms.ImageListStreamer.
+        /// </summary>
+        internal static System.Windows.Forms.ImageListStreamer ilAutocomplete_ImageStream {
+            get {
+                object obj = ResourceManager.GetObject("ilAutocomplete_ImageStream", resourceCulture);
+                return ((System.Windows.Forms.ImageListStreamer)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Point similar to {X=17,Y=41}.
+        /// </summary>
+        internal static System.Drawing.Point ilAutocomplete_TrayLocation {
+            get {
+                object obj = ResourceManager.GetObject("ilAutocomplete_TrayLocation", resourceCulture);
+                return ((System.Drawing.Point)(obj));
             }
         }
         
@@ -181,12 +291,62 @@ namespace NodeMCU_Studio_2015.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap newToolStripButton_Image {
+            get {
+                object obj = ResourceManager.GetObject("newToolStripButton_Image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon nodemcu {
             get {
                 object obj = ResourceManager.GetObject("nodemcu", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Point similar to {X=431,Y=17}.
+        /// </summary>
+        internal static System.Drawing.Point ofdMain_TrayLocation {
+            get {
+                object obj = ResourceManager.GetObject("ofdMain_TrayLocation", resourceCulture);
+                return ((System.Drawing.Point)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap openToolStripButton_Image {
+            get {
+                object obj = ResourceManager.GetObject("openToolStripButton_Image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap pasteToolStripButton_Image {
+            get {
+                object obj = ResourceManager.GetObject("pasteToolStripButton_Image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap printToolStripButton_Image {
+            get {
+                object obj = ResourceManager.GetObject("printToolStripButton_Image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -207,6 +367,16 @@ namespace NodeMCU_Studio_2015.Properties {
             get {
                 object obj = ResourceManager.GetObject("redo_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Refresh {
+            get {
+                object obj = ResourceManager.GetObject("Refresh", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -233,6 +403,26 @@ namespace NodeMCU_Studio_2015.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap saveToolStripButton_Image {
+            get {
+                object obj = ResourceManager.GetObject("saveToolStripButton_Image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Point similar to {X=336,Y=17}.
+        /// </summary>
+        internal static System.Drawing.Point sfdMain_TrayLocation {
+            get {
+                object obj = ResourceManager.GetObject("sfdMain_TrayLocation", resourceCulture);
+                return ((System.Drawing.Point)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap smile_16x16 {
             get {
                 object obj = ResourceManager.GetObject("smile_16x16", resourceCulture);
@@ -247,6 +437,36 @@ namespace NodeMCU_Studio_2015.Properties {
             get {
                 object obj = ResourceManager.GetObject("snippets", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Point similar to {X=623,Y=17}.
+        /// </summary>
+        internal static System.Drawing.Point tmUpdateInterface_TrayLocation {
+            get {
+                object obj = ResourceManager.GetObject("tmUpdateInterface_TrayLocation", resourceCulture);
+                return ((System.Drawing.Point)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap toolStripButton1_Image {
+            get {
+                object obj = ResourceManager.GetObject("toolStripButton1_Image", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Point similar to {X=248,Y=17}.
+        /// </summary>
+        internal static System.Drawing.Point tsMain_TrayLocation {
+            get {
+                object obj = ResourceManager.GetObject("tsMain_TrayLocation", resourceCulture);
+                return ((System.Drawing.Point)(obj));
             }
         }
         
