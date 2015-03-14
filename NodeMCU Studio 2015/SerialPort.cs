@@ -14,7 +14,7 @@ namespace NodeMCU_Studio_2015
     class SerialPort : IDisposable
     {
         private static SerialPort instance;
-        private SP currentSP;
+        private readonly SP currentSP;
 
         private const int MAX_RETRIES = 100;
 

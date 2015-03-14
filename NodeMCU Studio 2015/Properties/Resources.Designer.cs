@@ -121,6 +121,15 @@ namespace NodeMCU_Studio_2015.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot connect to device..
+        /// </summary>
+        internal static string cannot_connect_to_device {
+            get {
+                return ResourceManager.GetString("cannot_connect_to_device", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap class_libraries {
@@ -191,6 +200,15 @@ namespace NodeMCU_Studio_2015.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you want to save {0} ?.
+        /// </summary>
+        internal static string do_you_want_to_save {
+            get {
+                return ResourceManager.GetString("do_you_want_to_save", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap download {
@@ -201,12 +219,48 @@ namespace NodeMCU_Studio_2015.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download to device failed..
+        /// </summary>
+        internal static string download_to_device_failed {
+            get {
+                return ResourceManager.GetString("download_to_device_failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap edit_padding_top {
             get {
                 object obj = ResourceManager.GetObject("edit_padding_top", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string error {
+            get {
+                return ResourceManager.GetString("error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Execute succeeded..
+        /// </summary>
+        internal static string excute_succeeded {
+            get {
+                return ResourceManager.GetString("excute_succeeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Execute failed..
+        /// </summary>
+        internal static string execute_failed {
+            get {
+                return ResourceManager.GetString("execute_failed", resourceCulture);
             }
         }
         
@@ -321,12 +375,39 @@ namespace NodeMCU_Studio_2015.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No file selected!.
+        /// </summary>
+        internal static string no_file_selected {
+            get {
+                return ResourceManager.GetString("no_file_selected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No serial port selected!.
+        /// </summary>
+        internal static string no_serial_port_selected {
+            get {
+                return ResourceManager.GetString("no_serial_port_selected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon nodemcu {
             get {
                 object obj = ResourceManager.GetObject("nodemcu", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not found..
+        /// </summary>
+        internal static string not_found {
+            get {
+                return ResourceManager.GetString("not_found", resourceCulture);
             }
         }
         
@@ -427,6 +508,15 @@ namespace NodeMCU_Studio_2015.Properties {
             get {
                 object obj = ResourceManager.GetObject("sad_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        internal static string save {
+            get {
+                return ResourceManager.GetString("save", resourceCulture);
             }
         }
         

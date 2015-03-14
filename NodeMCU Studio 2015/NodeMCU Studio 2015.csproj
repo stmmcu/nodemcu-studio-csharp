@@ -161,7 +161,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Refresh.png" />
     <None Include="Resources\34-refresh.png" />
     <None Include="Resources\download.png" />
     <None Include="Resources\run.png" />

@@ -1,49 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Windows;
 using System.Windows.Forms;
 using FarsiLibrary.Win;
 using FastColoredTextBoxNS;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Drawing.Drawing2D;
+using NodeMCU_Studio_2015.Properties;
+using MessageBox = System.Windows.Forms.MessageBox;
+using Point = System.Drawing.Point;
+using Style = FastColoredTextBoxNS.Style;
 
 namespace NodeMCU_Studio_2015
 {
     public partial class PowerfulLuaEditor : Form
     {
-        List<string> keywords = new List<string>();
-        List<string> methods = new List<string>();
-        List<string> snippets = new List<string>();
-        Style invisibleCharsStyle = new InvisibleCharsRenderer(Pens.Gray);
-        Color currentLineColor = Color.FromArgb(100, 210, 210, 255);
-        Color changedLineColor = Color.FromArgb(255, 230, 230, 255);
-        SynchronizationContext context;
+        readonly List<string> _keywords = new List<string>();
+        readonly List<string> _methods = new List<string>();
+        readonly List<string> _snippets = new List<string>();
+        readonly Style _invisibleCharsStyle = new InvisibleCharsRenderer(Pens.Gray);
+        readonly Color _currentLineColor = Color.FromArgb(100, 210, 210, 255);
+        readonly Color _changedLineColor = Color.FromArgb(255, 230, 230, 255);
+        readonly SynchronizationContext _context;
 
-        System.Windows.Window parent;
+        readonly Window _parent;
 
-        public PowerfulLuaEditor(System.Windows.Window parent)
+        public PowerfulLuaEditor(Window parent)
         {
             InitializeComponent();
 
             //init menu images
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PowerfulLuaEditor));
-            copyToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("copyToolStripButton.Image")));
-            cutToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("cutToolStripButton.Image")));
-            pasteToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("pasteToolStripButton.Image")));
+            var resources = new ComponentResourceManager(typeof(PowerfulLuaEditor));
+            copyToolStripMenuItem.Image = ((Image)(resources.GetObject("copyToolStripButton.Image")));
+            cutToolStripMenuItem.Image = ((Image)(resources.GetObject("cutToolStripButton.Image")));
+            pasteToolStripMenuItem.Image = ((Image)(resources.GetObject("pasteToolStripButton.Image")));
 
-            ByteArrayToList(Properties.Resources.keywords, keywords);
-            ByteArrayToList(Properties.Resources.methods, methods);
-            ByteArrayToList(Properties.Resources.snippets, snippets);
+            ByteArrayToList(Resources.keywords, _keywords);
+            ByteArrayToList(Resources.methods, _methods);
+            ByteArrayToList(Resources.snippets, _snippets);
 
-            this.parent = parent;
+            _parent = parent;
 
-            context = SynchronizationContext.Current;
+            _context = SynchronizationContext.Current;
 
             RefreshSerialPort();
 
@@ -53,7 +55,7 @@ namespace NodeMCU_Studio_2015
 
         private void PowerfulLuaEditor_IsOpenChanged(bool isOpen)
         {
-            context.Post((_) =>
+            _context.Post(_ =>
             {
                 closeSerialPortConnectionToolStripMenuItem.Enabled = isOpen;
                 toolStripCloseButton.Enabled = isOpen;
@@ -68,7 +70,7 @@ namespace NodeMCU_Studio_2015
                 string line;
                 while ((line = sr.ReadLine()) != null)
                 {
-                    list.Add(System.Text.RegularExpressions.Regex.Unescape(line));
+                    list.Add(Regex.Unescape(line));
                 }
             }
         }
@@ -79,23 +81,27 @@ namespace NodeMCU_Studio_2015
             CreateTab(null);
         }
 
-        private Style sameWordsStyle = new MarkerStyle(new SolidBrush(Color.FromArgb(50, Color.Gray)));
+        private readonly Style _sameWordsStyle = new MarkerStyle(new SolidBrush(Color.FromArgb(50, Color.Gray)));
 
         private void CreateTab(string fileName)
         {
             try
             {
-                var tb = new FastColoredTextBox();
-                tb.Font = new Font("Consolas", 9.75f);
-                tb.ContextMenuStrip = cmMain;
-                tb.Dock = DockStyle.Fill;
-                tb.BorderStyle = BorderStyle.Fixed3D;
+                var tb = new FastColoredTextBox
+                {
+                    Font = new Font("Consolas", 9.75f),
+                    ContextMenuStrip = cmMain,
+                    Dock = DockStyle.Fill,
+                    BorderStyle = BorderStyle.Fixed3D,
+                    LeftPadding = 17,
+                    Language = Language.Lua
+                };
                 //tb.VirtualSpace = true;
-                tb.LeftPadding = 17;
-                tb.Language = Language.Lua;
-                tb.AddStyle(sameWordsStyle);//same words style
-                var tab = new FATabStripItem(fileName!=null?Path.GetFileName(fileName):"[new]", tb);
-                tab.Tag = fileName;
+                tb.AddStyle(_sameWordsStyle);//same words style
+                var tab = new FATabStripItem(fileName != null ? Path.GetFileName(fileName) : "[new]", tb)
+                {
+                    Tag = fileName
+                };
                 if (fileName != null)
                     tb.OpenFile(fileName);
                 tb.Tag = new TbInfo();
@@ -104,25 +110,26 @@ namespace NodeMCU_Studio_2015
                 tb.Focus();
                 tb.DelayedTextChangedInterval = 1000;
                 tb.DelayedEventsInterval = 500;
-                tb.TextChangedDelayed += new EventHandler<TextChangedEventArgs>(tb_TextChangedDelayed);
-                tb.SelectionChangedDelayed += new EventHandler(tb_SelectionChangedDelayed);
-                tb.KeyDown += new KeyEventHandler(tb_KeyDown);
-                tb.MouseMove += new MouseEventHandler(tb_MouseMove);
-                tb.ChangedLineColor = changedLineColor;
+                tb.TextChangedDelayed += tb_TextChangedDelayed;
+                tb.SelectionChangedDelayed += tb_SelectionChangedDelayed;
+                tb.KeyDown += tb_KeyDown;
+                tb.MouseMove += tb_MouseMove;
+                tb.ChangedLineColor = _changedLineColor;
                 if(btHighlightCurrentLine.Checked)
-                    tb.CurrentLineColor = currentLineColor;
+                    tb.CurrentLineColor = _currentLineColor;
                 tb.ShowFoldingLines = btShowFoldingLines.Checked;
                 tb.HighlightingRangeType = HighlightingRangeType.VisibleRange;
                 //create autocomplete popup menu
                 AutocompleteMenu popupMenu = new AutocompleteMenu(tb);
                 popupMenu.Items.ImageList = ilAutocomplete;
-                popupMenu.Opening += new EventHandler<CancelEventArgs>(popupMenu_Opening);
+                popupMenu.Opening += popupMenu_Opening;
                 BuildAutocompleteMenu(popupMenu);
-                (tb.Tag as TbInfo).popupMenu = popupMenu;
+                var tbInfo = tb.Tag as TbInfo;
+                if (tbInfo != null) tbInfo.PopupMenu = popupMenu;
             }
             catch (Exception ex)
             {
-                if (MessageBox.Show(ex.Message, "Error", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error) == System.Windows.Forms.DialogResult.Retry)
+                if (MessageBox.Show(ex.Message, Resources.error, MessageBoxButtons.RetryCancel, MessageBoxIcon.Error) == DialogResult.Retry)
                     CreateTab(fileName);
             }
         }
@@ -131,12 +138,12 @@ namespace NodeMCU_Studio_2015
         {
             //---block autocomplete menu for comments
             //get index of green style (used for comments)
-            var iGreenStyle = CurrentTB.GetStyleIndex(CurrentTB.SyntaxHighlighter.GreenStyle);
+            var iGreenStyle = CurrentTb.GetStyleIndex(CurrentTb.SyntaxHighlighter.GreenStyle);
             if (iGreenStyle >= 0)
-                if (CurrentTB.Selection.Start.iChar > 0)
+                if (CurrentTb.Selection.Start.iChar > 0)
                 {
                     //current char (before caret)
-                    var c = CurrentTB[CurrentTB.Selection.Start.iLine][CurrentTB.Selection.Start.iChar - 1];
+                    var c = CurrentTb[CurrentTb.Selection.Start.iLine][CurrentTb.Selection.Start.iChar - 1];
                     //green Style
                     var greenStyleIndex = Range.ToStyleIndex(iGreenStyle);
                     //if char contains green style then block popup menu
@@ -147,14 +154,9 @@ namespace NodeMCU_Studio_2015
 
         private void BuildAutocompleteMenu(AutocompleteMenu popupMenu)
         {
-            List<AutocompleteItem> items = new List<AutocompleteItem>();
-
-            foreach (var item in snippets)
-                items.Add(new SnippetAutocompleteItem(item) { ImageIndex = 1 });
-            foreach (var item in methods)
-                items.Add(new MethodAutocompleteItem(item) { ImageIndex = 2 });
-            foreach (var item in keywords)
-                items.Add(new AutocompleteItem(item));
+            List<AutocompleteItem> items = _snippets.Select(item => new SnippetAutocompleteItem(item) {ImageIndex = 1}).Cast<AutocompleteItem>().ToList();
+            items.AddRange(_methods.Select(item => new MethodAutocompleteItem(item) {ImageIndex = 2}));
+            items.AddRange(_keywords.Select(item => new AutocompleteItem(item)));
 
             items.Add(new InsertSpaceSnippet());
             items.Add(new InsertSpaceSnippet(@"^(\w+)([=<>!:]+)(\w+)$"));
@@ -168,11 +170,14 @@ namespace NodeMCU_Studio_2015
         void tb_MouseMove(object sender, MouseEventArgs e)
         {
             var tb = sender as FastColoredTextBox;
-            var place = tb.PointToPlace(e.Location);
-            var r = new Range(tb, place, place);
+            if (tb != null)
+            {
+                var place = tb.PointToPlace(e.Location);
+                var r = new Range(tb, place, place);
 
-            string text = r.GetFragment("[a-zA-Z]").Text;
-            lbWordUnderMouse.Text = text;
+                string text = r.GetFragment("[a-zA-Z]").Text;
+                lbWordUnderMouse.Text = text;
+            }
         }
 
         void tb_KeyDown(object sender, KeyEventArgs e)
@@ -192,7 +197,8 @@ namespace NodeMCU_Studio_2015
             if (e.KeyData == (Keys.K | Keys.Control))
             {
                 //forced show (MinFragmentLength will be ignored)
-                (CurrentTB.Tag as TbInfo).popupMenu.Show(true);
+                var tbInfo = CurrentTb.Tag as TbInfo;
+                tbInfo?.PopupMenu.Show(true);
                 e.Handled = true;
             }
         }
@@ -201,40 +207,46 @@ namespace NodeMCU_Studio_2015
         {
             var tb = sender as FastColoredTextBox;
             //remember last visit time
-            if (tb.Selection.IsEmpty && tb.Selection.Start.iLine < tb.LinesCount)
+            if (tb != null && (tb.Selection.IsEmpty && tb.Selection.Start.iLine < tb.LinesCount))
             {
-                if (lastNavigatedDateTime != tb[tb.Selection.Start.iLine].LastVisit)
+                if (_lastNavigatedDateTime != tb[tb.Selection.Start.iLine].LastVisit)
                 {
                     tb[tb.Selection.Start.iLine].LastVisit = DateTime.Now;
-                    lastNavigatedDateTime = tb[tb.Selection.Start.iLine].LastVisit;
+                    _lastNavigatedDateTime = tb[tb.Selection.Start.iLine].LastVisit;
                 }
             }
 
             //highlight same words
-            tb.VisibleRange.ClearStyle(sameWordsStyle);
-            if (!tb.Selection.IsEmpty)
-                return;//user selected diapason
-            //get fragment around caret
-            var fragment = tb.Selection.GetFragment(@"\w");
-            string text = fragment.Text;
-            if (text.Length == 0)
-                return;
-            //highlight same words
-            Range[] ranges = tb.VisibleRange.GetRanges("\\b" + text + "\\b").ToArray();
+            if (tb != null)
+            {
+                tb.VisibleRange.ClearStyle(_sameWordsStyle);
+                if (!tb.Selection.IsEmpty)
+                    return;//user selected diapason
+                //get fragment around caret
+                var fragment = tb.Selection.GetFragment(@"\w");
+                string text = fragment.Text;
+                if (text.Length == 0)
+                    return;
+                //highlight same words
+                Range[] ranges = tb.VisibleRange.GetRanges("\\b" + text + "\\b").ToArray();
 
-            if (ranges.Length > 1)
-                foreach (var r in ranges)
-                    r.SetStyle(sameWordsStyle);
+                if (ranges.Length > 1)
+                    foreach (var r in ranges)
+                        r.SetStyle(_sameWordsStyle);
+            }
         }
 
         void tb_TextChangedDelayed(object sender, TextChangedEventArgs e)
         {
-            FastColoredTextBox tb = (sender as FastColoredTextBox);
             //rebuild object explorer
-            string text = (sender as FastColoredTextBox).Text;
-            ThreadPool.QueueUserWorkItem(
-                (o)=>ReBuildObjectExplorer(text)
-            );
+            var fastColoredTextBox = sender as FastColoredTextBox;
+            if (fastColoredTextBox != null)
+            {
+                string text = fastColoredTextBox.Text;
+                ThreadPool.QueueUserWorkItem(
+                    o=>ReBuildObjectExplorer(text)
+                    );
+            }
 
             //show invisible chars
             HighlightInvisibleChars(e.ChangedRange);
@@ -242,82 +254,67 @@ namespace NodeMCU_Studio_2015
 
         private void HighlightInvisibleChars(Range range)
         {
-            range.ClearStyle(invisibleCharsStyle);
+            range.ClearStyle(_invisibleCharsStyle);
             if (btInvisibleChars.Checked)
-                range.SetStyle(invisibleCharsStyle, @".$|.\r\n|\s");
+                range.SetStyle(_invisibleCharsStyle, @".$|.\r\n|\s");
         }
 
-        List<ExplorerItem> explorerList = new List<ExplorerItem>();
+        List<ExplorerItem> _explorerList = new List<ExplorerItem>();
 
         private void ReBuildObjectExplorer(string text)
         {
             try
             {
-                List<ExplorerItem> list = new List<ExplorerItem>();
-                int lastClassIndex = -1;
+                var list = new List<ExplorerItem>();
                 //find classes, methods and properties
-                Regex regex = new Regex(@"^(?<range>[\w\s]+\b(class|struct|enum|interface)\s+[\w<>,\s]+)|^\s*(public|private|internal|protected)[^\n]+(\n?\s*{|;)?", RegexOptions.Multiline);
+                //Regex regex = new Regex(@"^(?<range>[\w\s]+\b(class|struct|enum|interface)\s+[\w<>,\s]+)|^\s*(public|private|internal|protected)[^\n]+(\n?\s*{|;)?", RegexOptions.Multiline);
+                var regex = new Regex(@"^\s*function\s+[^\s]+\(.*\)|^\s*(local\s+)?[^\s]+\s*=\s*[^\s]+", RegexOptions.Multiline);
                 foreach (Match r in regex.Matches(text))
                     try
                     {
-                        string s = r.Value;
-                        int i = s.IndexOfAny(new char[] { '=', '{', ';' });
+                        var s = r.Value;
+                        var i = s.IndexOfAny(new[] {'=', '{', ';'});
                         if (i >= 0)
                             s = s.Substring(0, i);
                         s = s.Trim();
 
-                        var item = new ExplorerItem() { title = s, position = r.Index };
-                        if (Regex.IsMatch(item.title, @"\b(class|struct|enum|interface)\b"))
+                        var item = new ExplorerItem {Title = s, Position = r.Index};
+                        if (Regex.IsMatch(item.Title, @"\b(function)\b"))
                         {
-                            item.title = item.title.Substring(item.title.LastIndexOf(' ')).Trim();
-                            item.type = ExplorerItemType.Class;
-                            list.Sort(lastClassIndex + 1, list.Count - (lastClassIndex + 1), new ExplorerItemComparer());
-                            lastClassIndex = list.Count;
+                            var parts = item.Title.Split('(');
+                            item.Title = parts[0].Substring(parts[0].LastIndexOf(' ')).Trim() + "(" + parts[1];
+                            item.Type = ExplorerItemType.Method;
                         }
                         else
-                            if (item.title.Contains(" event "))
+                        {
+                            int ii = item.Title.LastIndexOf(' ');
+                            if (ii != -1)
                             {
-                                int ii = item.title.LastIndexOf(' ');
-                                item.title = item.title.Substring(ii).Trim();
-                                item.type = ExplorerItemType.Event;
+                                item.Title = item.Title.Substring(ii);
                             }
-                            else
-                                if (item.title.Contains("("))
-                                {
-                                    var parts = item.title.Split('(');
-                                    item.title = parts[0].Substring(parts[0].LastIndexOf(' ')).Trim() + "(" + parts[1];
-                                    item.type = ExplorerItemType.Method;
-                                }
-                                else
-                                    if (item.title.EndsWith("]"))
-                                    {
-                                        var parts = item.title.Split('[');
-                                        if (parts.Length < 2) continue;
-                                        item.title = parts[0].Substring(parts[0].LastIndexOf(' ')).Trim() + "[" + parts[1];
-                                        item.type = ExplorerItemType.Method;
-                                    }
-                                    else
-                                    {
-                                        int ii = item.title.LastIndexOf(' ');
-                                        item.title = item.title.Substring(ii).Trim();
-                                        item.type = ExplorerItemType.Property;
-                                    }
+                            item.Title = item.Title.Trim();
+                            item.Type = ExplorerItemType.Property;
+                        }
                         list.Add(item);
                     }
-                    catch { ;}
-
-                list.Sort(lastClassIndex + 1, list.Count - (lastClassIndex + 1), new ExplorerItemComparer());
+                    catch(Exception e)
+                    {
+                        MessageBox.Show(e.ToString());
+                    }
 
                 BeginInvoke(
                     new Action(() =>
                         {
-                            explorerList = list;
-                            dgvObjectExplorer.RowCount = explorerList.Count;
+                            _explorerList = list;
+                            dgvObjectExplorer.RowCount = _explorerList.Count;
                             dgvObjectExplorer.Invalidate();
                         })
                 );
             }
-            catch { ;}
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
         }
 
         enum ExplorerItemType
@@ -327,26 +324,19 @@ namespace NodeMCU_Studio_2015
 
         class ExplorerItem
         {
-            public ExplorerItemType type;
-            public string title;
-            public int position;
-        }
-
-        class ExplorerItemComparer : IComparer<ExplorerItem>
-        {
-            public int Compare(ExplorerItem x, ExplorerItem y)
-            {
-                return x.title.CompareTo(y.title);
-            }
+            public ExplorerItemType Type;
+            public string Title;
+            public int Position;
         }
 
         private void tsFiles_TabStripItemClosing(TabStripItemClosingEventArgs e)
         {
-            if ((e.Item.Controls[0] as FastColoredTextBox).IsChanged)
+            var fastColoredTextBox = e.Item.Controls[0] as FastColoredTextBox;
+            if (fastColoredTextBox != null && fastColoredTextBox.IsChanged)
             {
-                switch(MessageBox.Show("Do you want save " + e.Item.Title + " ?", "Save", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information))
+                switch(MessageBox.Show(string.Format(Resources.do_you_want_to_save, e.Item.Title), Resources.save, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information))
                 {
-                    case System.Windows.Forms.DialogResult.Yes:
+                    case DialogResult.Yes:
                         if (!Save(e.Item))
                             e.Cancel = true;
                         break;
@@ -362,7 +352,7 @@ namespace NodeMCU_Studio_2015
             var tb = (tab.Controls[0] as FastColoredTextBox);
             if (tab.Tag == null)
             {
-                if (sfdMain.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                if (sfdMain.ShowDialog() != DialogResult.OK)
                     return false;
                 tab.Title = Path.GetFileName(sfdMain.FileName);
                 tab.Tag = sfdMain.FileName;
@@ -370,18 +360,20 @@ namespace NodeMCU_Studio_2015
 
             try
             {
-                File.WriteAllText(tab.Tag as string, tb.Text);
-                tb.IsChanged = false;
+                if (tb != null)
+                {
+                    File.WriteAllText((string) tab.Tag, tb.Text);
+                    tb.IsChanged = false;
+                }
             }
             catch (Exception ex)
             {
-                if (MessageBox.Show(ex.Message, "Error", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error) == DialogResult.Retry)
+                if (MessageBox.Show(ex.Message, Resources.error, MessageBoxButtons.RetryCancel, MessageBoxIcon.Error) == DialogResult.Retry)
                     return Save(tab);
-                else
-                    return false;
+                return false;
             }
 
-            tb.Invalidate();
+            tb?.Invalidate();
 
             return true;
         }
@@ -414,16 +406,14 @@ namespace NodeMCU_Studio_2015
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (ofdMain.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (ofdMain.ShowDialog() == DialogResult.OK)
                 CreateTab(ofdMain.FileName);
         }
 
-        FastColoredTextBox CurrentTB
+        FastColoredTextBox CurrentTb
         {
             get {
-                if (tsFiles.SelectedItem == null)
-                    return null;
-                return (tsFiles.SelectedItem.Controls[0] as FastColoredTextBox);
+                return tsFiles.SelectedItem?.Controls[0] as FastColoredTextBox;
             }
 
             set
@@ -435,63 +425,73 @@ namespace NodeMCU_Studio_2015
 
         private void cutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CurrentTB.Cut();
+            CurrentTb.Cut();
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CurrentTB.Copy();
+            CurrentTb.Copy();
         }
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CurrentTB.Paste();
+            CurrentTb.Paste();
         }
 
         private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CurrentTB.Selection.SelectAll();
+            CurrentTb.Selection.SelectAll();
         }
 
         private void undoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (CurrentTB.UndoEnabled)
-                CurrentTB.Undo();
+            if (CurrentTb.UndoEnabled)
+                CurrentTb.Undo();
         }
 
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (CurrentTB.RedoEnabled)
-                CurrentTB.Redo();
+            if (CurrentTb.RedoEnabled)
+                CurrentTb.Redo();
+        }
+
+        private void UpdateInterfaceHasFiles()
+        {
+            var tb = CurrentTb;
+            undoStripButton.Enabled = undoToolStripMenuItem.Enabled = tb.UndoEnabled;
+            redoStripButton.Enabled = redoToolStripMenuItem.Enabled = tb.RedoEnabled;
+            saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = tb.IsChanged;
+            saveAsToolStripMenuItem.Enabled = true;
+            pasteToolStripButton.Enabled = pasteToolStripMenuItem.Enabled = true;
+            cutToolStripButton.Enabled = cutToolStripMenuItem.Enabled =
+            copyToolStripButton.Enabled = copyToolStripMenuItem.Enabled = !tb.Selection.IsEmpty;
+            printToolStripButton.Enabled = true;
+        }
+
+        private void UpdateInterfaceNoFiles()
+        {
+            saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = false;
+            saveAsToolStripMenuItem.Enabled = false;
+            cutToolStripButton.Enabled = cutToolStripMenuItem.Enabled =
+            copyToolStripButton.Enabled = copyToolStripMenuItem.Enabled = false;
+            pasteToolStripButton.Enabled = pasteToolStripMenuItem.Enabled = false;
+            printToolStripButton.Enabled = false;
+            undoStripButton.Enabled = undoToolStripMenuItem.Enabled = false;
+            redoStripButton.Enabled = redoToolStripMenuItem.Enabled = false;
+            dgvObjectExplorer.RowCount = 0;
         }
 
         private void tmUpdateInterface_Tick(object sender, EventArgs e)
         {
             try
             {
-                if(CurrentTB != null && tsFiles.Items.Count>0)
+                if(CurrentTb != null && tsFiles.Items.Count>0)
                 {
-                    var tb = CurrentTB;
-                    undoStripButton.Enabled = undoToolStripMenuItem.Enabled = tb.UndoEnabled;
-                    redoStripButton.Enabled = redoToolStripMenuItem.Enabled = tb.RedoEnabled;
-                    saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = tb.IsChanged;
-                    saveAsToolStripMenuItem.Enabled = true;
-                    pasteToolStripButton.Enabled = pasteToolStripMenuItem.Enabled = true;
-                    cutToolStripButton.Enabled = cutToolStripMenuItem.Enabled =
-                    copyToolStripButton.Enabled = copyToolStripMenuItem.Enabled = !tb.Selection.IsEmpty;
-                    printToolStripButton.Enabled = true;
+                    UpdateInterfaceHasFiles();
                 }
                 else
                 {
-                    saveToolStripButton.Enabled = saveToolStripMenuItem.Enabled = false;
-                    saveAsToolStripMenuItem.Enabled = false;
-                    cutToolStripButton.Enabled = cutToolStripMenuItem.Enabled =
-                    copyToolStripButton.Enabled = copyToolStripMenuItem.Enabled = false;
-                    pasteToolStripButton.Enabled = pasteToolStripMenuItem.Enabled = false;
-                    printToolStripButton.Enabled = false;
-                    undoStripButton.Enabled = undoToolStripMenuItem.Enabled = false;
-                    redoStripButton.Enabled = redoToolStripMenuItem.Enabled = false;
-                    dgvObjectExplorer.RowCount = 0;
+                    UpdateInterfaceNoFiles();
                 }
             }
             catch (Exception ex)
@@ -502,54 +502,54 @@ namespace NodeMCU_Studio_2015
 
         private void printToolStripButton_Click(object sender, EventArgs e)
         {
-            if(CurrentTB!=null)
+            if(CurrentTb!=null)
             {
-                var settings = new PrintDialogSettings();
-                settings.Title = tsFiles.SelectedItem.Title;
-                settings.Header = "&b&w&b";
-                settings.Footer = "&b&p";
-                CurrentTB.Print(settings);
+                var settings = new PrintDialogSettings
+                {
+                    Title = tsFiles.SelectedItem.Title,
+                    Header = "&b&w&b",
+                    Footer = "&b&p"
+                };
+                CurrentTb.Print(settings);
             }
         }
 
-        bool tbFindChanged = false;
+        bool _tbFindChanged;
 
         private void tbFind_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar == '\r' && CurrentTB != null)
+            if (e.KeyChar == '\r' && CurrentTb != null)
             {
-                Range r = tbFindChanged?CurrentTB.Range.Clone():CurrentTB.Selection.Clone();
-                tbFindChanged = false;
-                r.End = new Place(CurrentTB[CurrentTB.LinesCount - 1].Count, CurrentTB.LinesCount - 1);
+                Range r = _tbFindChanged?CurrentTb.Range.Clone():CurrentTb.Selection.Clone();
+                _tbFindChanged = false;
+                r.End = new Place(CurrentTb[CurrentTb.LinesCount - 1].Count, CurrentTb.LinesCount - 1);
                 var pattern = Regex.Escape(tbFind.Text);
                 foreach (var found in r.GetRanges(pattern))
                 {
                     found.Inverse();
-                    CurrentTB.Selection = found;
-                    CurrentTB.DoSelectionVisible();
+                    CurrentTb.Selection = found;
+                    CurrentTb.DoSelectionVisible();
                     return;
                 }
-                MessageBox.Show("Not found.");
+                MessageBox.Show(Resources.not_found);
             }
             else
-                tbFindChanged = true;
+                _tbFindChanged = true;
         }
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CurrentTB.ShowFindDialog();
+            CurrentTb.ShowFindDialog();
         }
 
         private void replaceToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CurrentTB.ShowReplaceDialog();
+            CurrentTb.ShowReplaceDialog();
         }
 
         private void PowerfulLuaEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
-            List<FATabStripItem> list = new List<FATabStripItem>();
-            foreach (FATabStripItem tab in  tsFiles.Items)
-                list.Add(tab);
+            List<FATabStripItem> list = tsFiles.Items.Cast<FATabStripItem>().ToList();
             foreach (var tab in list)
             {
                 TabStripItemClosingEventArgs args = new TabStripItemClosingEventArgs(tab);
@@ -562,18 +562,18 @@ namespace NodeMCU_Studio_2015
                 tsFiles.RemoveTab(tab);
             }
 
-            parent.Close();
+            _parent.Close();
         }
 
         private void dgvObjectExplorer_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if (CurrentTB != null)
+            if (CurrentTb != null)
             {
-                var item = explorerList[e.RowIndex];
-                CurrentTB.GoEnd();
-                CurrentTB.SelectionStart = item.position;
-                CurrentTB.DoSelectionVisible();
-                CurrentTB.Focus();
+                var item = _explorerList[e.RowIndex];
+                CurrentTb.GoEnd();
+                CurrentTb.SelectionStart = item.Position;
+                CurrentTb.DoSelectionVisible();
+                CurrentTb.Focus();
             }
         }
 
@@ -581,37 +581,40 @@ namespace NodeMCU_Studio_2015
         {
             try
             {
-                ExplorerItem item = explorerList[e.RowIndex];
+                ExplorerItem item = _explorerList[e.RowIndex];
                 if (e.ColumnIndex == 1)
-                    e.Value = item.title;
+                    e.Value = item.Title;
                 else
-                    switch (item.type)
+                    switch (item.Type)
                     {
                         case ExplorerItemType.Class:
-                            e.Value = Properties.Resources.class_libraries;
+                            e.Value = Resources.class_libraries;
                             return;
                         case ExplorerItemType.Method:
-                            e.Value = Properties.Resources.box;
+                            e.Value = Resources.box;
                             return;
                         case ExplorerItemType.Event:
-                            e.Value = Properties.Resources.lightning;
+                            e.Value = Resources.lightning;
                             return;
                         case ExplorerItemType.Property:
-                            e.Value = Properties.Resources.property;
+                            e.Value = Resources.property;
                             return;
                     }
             }
-            catch{;}
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.ToString());
+            }
         }
 
         private void tsFiles_TabStripItemSelectionChanged(TabStripItemChangedEventArgs e)
         {
-            if (CurrentTB != null)
+            if (CurrentTb != null)
             {
-                CurrentTB.Focus();
-                string text = CurrentTB.Text;
+                CurrentTb.Focus();
+                string text = CurrentTb.Text;
                 ThreadPool.QueueUserWorkItem(
-                    (o) => ReBuildObjectExplorer(text)
+                    o => ReBuildObjectExplorer(text)
                 );
             }
         }
@@ -626,9 +629,9 @@ namespace NodeMCU_Studio_2015
             NavigateForward();
         }
 
-        DateTime lastNavigatedDateTime = DateTime.Now;
+        DateTime _lastNavigatedDateTime = DateTime.Now;
 
-        private bool NavigateBackward()
+        private void NavigateBackward()
         {
             DateTime max = new DateTime();
             int iLine = -1;
@@ -636,29 +639,30 @@ namespace NodeMCU_Studio_2015
             for (int iTab = 0; iTab < tsFiles.Items.Count; iTab++)
             {
                 var t = (tsFiles.Items[iTab].Controls[0] as FastColoredTextBox);
-                for (int i = 0; i < t.LinesCount; i++)
-                    if (t[i].LastVisit < lastNavigatedDateTime && t[i].LastVisit > max)
-                    {
-                        max = t[i].LastVisit;
-                        iLine = i;
-                        tb = t;
-                    }
+                if (t != null)
+                {
+                    for (int i = 0; i < t.LinesCount; i++)
+                        if (t[i].LastVisit < _lastNavigatedDateTime && t[i].LastVisit > max)
+                        {
+                            max = t[i].LastVisit;
+                            iLine = i;
+                            tb = t;
+                        }
+                }
             }
             if (iLine >= 0)
             {
+                if (tb == null) return;
                 tsFiles.SelectedItem = (tb.Parent as FATabStripItem);
                 tb.Navigate(iLine);
-                lastNavigatedDateTime = tb[iLine].LastVisit;
-                Console.WriteLine("Backward: " + lastNavigatedDateTime);
+                _lastNavigatedDateTime = tb[iLine].LastVisit;
+                //Console.WriteLine("Backward: " + _lastNavigatedDateTime);
                 tb.Focus();
                 tb.Invalidate();
-                return true;
             }
-            else
-                return false;
         }
 
-        private bool NavigateForward()
+        private void NavigateForward()
         {
             DateTime min = DateTime.Now;
             int iLine = -1;
@@ -666,44 +670,28 @@ namespace NodeMCU_Studio_2015
             for (int iTab = 0; iTab < tsFiles.Items.Count; iTab++)
             {
                 var t = (tsFiles.Items[iTab].Controls[0] as FastColoredTextBox);
-                for (int i = 0; i < t.LinesCount; i++)
-                    if (t[i].LastVisit > lastNavigatedDateTime && t[i].LastVisit < min)
-                    {
-                        min = t[i].LastVisit;
-                        iLine = i;
-                        tb = t;
-                    }
+                if (t != null)
+                {
+                    for (var i = 0; i < t.LinesCount; i++)
+                        if (t[i].LastVisit > _lastNavigatedDateTime && t[i].LastVisit < min)
+                        {
+                            min = t[i].LastVisit;
+                            iLine = i;
+                            tb = t;
+                        }
+                }
             }
             if (iLine >= 0)
             {
-                tsFiles.SelectedItem = (tb.Parent as FATabStripItem);
-                tb.Navigate(iLine);
-                lastNavigatedDateTime = tb[iLine].LastVisit;
-                Console.WriteLine("Forward: " + lastNavigatedDateTime);
-                tb.Focus();
-                tb.Invalidate();
-                return true;
-            }
-            else
-                return false;
-        }
-
-        /// <summary>
-        /// This item appears when any part of snippet text is typed
-        /// </summary>
-        class DeclarationSnippet : SnippetAutocompleteItem
-        {
-            public DeclarationSnippet(string snippet)
-                : base(snippet)
-            {
-            }
-
-            public override CompareResult Compare(string fragmentText)
-            {
-                var pattern = Regex.Escape(fragmentText);
-                if (Regex.IsMatch(Text, "\\b" + pattern, RegexOptions.IgnoreCase))
-                    return CompareResult.Visible;
-                return CompareResult.Hidden;
+                if (tb != null)
+                {
+                    tsFiles.SelectedItem = (tb.Parent as FATabStripItem);
+                    tb.Navigate(iLine);
+                    _lastNavigatedDateTime = tb[iLine].LastVisit;
+                    //Console.WriteLine("Forward: " + _lastNavigatedDateTime);
+                    tb.Focus();
+                    tb.Invalidate();
+                }
             }
         }
 
@@ -713,12 +701,12 @@ namespace NodeMCU_Studio_2015
         /// </summary>
         class InsertSpaceSnippet : AutocompleteItem
         {
-            string pattern;
+            readonly string _pattern;
 
             public InsertSpaceSnippet(string pattern)
                 : base("")
             {
-                this.pattern = pattern;
+                _pattern = pattern;
             }
 
             public InsertSpaceSnippet()
@@ -728,7 +716,7 @@ namespace NodeMCU_Studio_2015
 
             public override CompareResult Compare(string fragmentText)
             {
-                if (Regex.IsMatch(fragmentText, pattern))
+                if (Regex.IsMatch(fragmentText, _pattern))
                 {
                     Text = InsertSpaces(fragmentText);
                     if (Text != fragmentText)
@@ -737,23 +725,15 @@ namespace NodeMCU_Studio_2015
                 return CompareResult.Hidden;
             }
 
-            public string InsertSpaces(string fragment)
+            private string InsertSpaces(string fragment)
             {
-                var m = Regex.Match(fragment, pattern);
-                if (m == null)
-                    return fragment;
+                var m = Regex.Match(fragment, _pattern);
                 if (m.Groups[1].Value == "" && m.Groups[3].Value == "")
                     return fragment;
                 return (m.Groups[1].Value + " " + m.Groups[2].Value + " " + m.Groups[3].Value).Trim();
             }
 
-            public override string ToolTipTitle
-            {
-                get
-                {
-                    return Text;
-                }
-            }
+            public override string ToolTipTitle => Text;
         }
 
         /// <summary>
@@ -761,7 +741,7 @@ namespace NodeMCU_Studio_2015
         /// </summary>
         class InsertEnterSnippet : AutocompleteItem
         {
-            Place enterPlace = Place.Empty;
+            Place _enterPlace = Place.Empty;
 
             public InsertEnterSnippet()
                 : base("[Line break]")
@@ -775,7 +755,7 @@ namespace NodeMCU_Studio_2015
                 {
                     if (r.CharBeforeStart == '}')
                     {
-                        enterPlace = r.Start;
+                        _enterPlace = r.Start;
                         return CompareResult.Visible;
                     }
 
@@ -789,8 +769,7 @@ namespace NodeMCU_Studio_2015
             {
                 //extend range
                 Range r = Parent.Fragment;
-                Place end = r.End;
-                r.Start = enterPlace;
+                r.Start = _enterPlace;
                 r.End = r.End;
                 //insert line break
                 return Environment.NewLine + r.Text;
@@ -803,18 +782,12 @@ namespace NodeMCU_Studio_2015
                     Parent.Fragment.tb.DoAutoIndent();
             }
 
-            public override string ToolTipTitle
-            {
-                get
-                {
-                    return "Insert line break after '}'";
-                }
-            }
+            public override string ToolTipTitle => "Insert line break after '}'";
         }
 
         private void autoIndentSelectedTextToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CurrentTB.DoAutoIndent();
+            CurrentTb.DoAutoIndent();
         }
 
         private void btInvisibleChars_Click(object sender, EventArgs e)
@@ -828,9 +801,12 @@ namespace NodeMCU_Studio_2015
             }
 
             foreach (FATabStripItem tab in tsFiles.Items)
-                HighlightInvisibleChars((tab.Controls[0] as FastColoredTextBox).Range);
-            if (CurrentTB!=null)
-                CurrentTB.Invalidate();
+            {
+                var fastColoredTextBox = tab.Controls[0] as FastColoredTextBox;
+                if (fastColoredTextBox != null)
+                    HighlightInvisibleChars(fastColoredTextBox.Range);
+            }
+            CurrentTb?.Invalidate();
         }
 
         private void btHighlightCurrentLine_Click(object sender, EventArgs e)
@@ -846,67 +822,61 @@ namespace NodeMCU_Studio_2015
 
             foreach (FATabStripItem tab in tsFiles.Items)
             {
-                if (btHighlightCurrentLine.Checked)
-                    (tab.Controls[0] as FastColoredTextBox).CurrentLineColor = currentLineColor;
-                else
-                    (tab.Controls[0] as FastColoredTextBox).CurrentLineColor = Color.Transparent;
+                var fastColoredTextBox = tab.Controls[0] as FastColoredTextBox;
+                if (fastColoredTextBox != null)
+                    fastColoredTextBox.CurrentLineColor = btHighlightCurrentLine.Checked ? _currentLineColor : Color.Transparent;
             }
-            if (CurrentTB != null)
-                CurrentTB.Invalidate();
+            CurrentTb?.Invalidate();
         }
 
         private void commentSelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CurrentTB.InsertLinePrefix("//");
+            CurrentTb.InsertLinePrefix("//");
         }
 
         private void uncommentSelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CurrentTB.RemoveLinePrefix("//");
+            CurrentTb.RemoveLinePrefix("//");
         }
 
         private void cloneLinesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //expand selection
-            CurrentTB.Selection.Expand();
+            CurrentTb.Selection.Expand();
             //get text of selected lines
-            string text = Environment.NewLine + CurrentTB.Selection.Text;
+            string text = Environment.NewLine + CurrentTb.Selection.Text;
             //move caret to end of selected lines
-            CurrentTB.Selection.Start = CurrentTB.Selection.End;
+            CurrentTb.Selection.Start = CurrentTb.Selection.End;
             //insert text
-            CurrentTB.InsertText(text);
+            CurrentTb.InsertText(text);
         }
 
         private void cloneLinesAndCommentToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //start autoUndo block
-            CurrentTB.BeginAutoUndo();
+            CurrentTb.BeginAutoUndo();
             //expand selection
-            CurrentTB.Selection.Expand();
+            CurrentTb.Selection.Expand();
             //get text of selected lines
-            string text = Environment.NewLine + CurrentTB.Selection.Text;
+            string text = Environment.NewLine + CurrentTb.Selection.Text;
             //comment lines
-            CurrentTB.InsertLinePrefix("//");
+            CurrentTb.InsertLinePrefix("//");
             //move caret to end of selected lines
-            CurrentTB.Selection.Start = CurrentTB.Selection.End;
+            CurrentTb.Selection.Start = CurrentTb.Selection.End;
             //insert text
-            CurrentTB.InsertText(text);
+            CurrentTb.InsertText(text);
             //end of autoUndo block
-            CurrentTB.EndAutoUndo();
+            CurrentTb.EndAutoUndo();
         }
 
         private void bookmarkPlusButton_Click(object sender, EventArgs e)
         {
-            if(CurrentTB == null) 
-                return;
-            CurrentTB.BookmarkLine(CurrentTB.Selection.Start.iLine);
+            CurrentTb?.BookmarkLine(CurrentTb.Selection.Start.iLine);
         }
 
         private void bookmarkMinusButton_Click(object sender, EventArgs e)
         {
-            if (CurrentTB == null)
-                return;
-            CurrentTB.UnbookmarkLine(CurrentTB.Selection.Start.iLine);
+            CurrentTb?.UnbookmarkLine(CurrentTb.Selection.Start.iLine);
         }
 
         private void gotoButton_DropDownOpening(object sender, EventArgs e)
@@ -915,24 +885,30 @@ namespace NodeMCU_Studio_2015
             foreach (Control tab in tsFiles.Items)
             {
                 FastColoredTextBox tb = tab.Controls[0] as FastColoredTextBox;
-                foreach (var bookmark in tb.Bookmarks)
-                {
-                    var item = gotoButton.DropDownItems.Add(bookmark.Name + " [" + Path.GetFileNameWithoutExtension(tab.Tag as String) + "]");
-                    item.Tag = bookmark;
-                    item.Click += (o, a) => {
-                        var b = (Bookmark)(o as ToolStripItem).Tag;
-                        try
+                if (tb != null)
+                    foreach (var bookmark in tb.Bookmarks)
+                    {
+                        var item = gotoButton.DropDownItems.Add(bookmark.Name + " [" + Path.GetFileNameWithoutExtension(tab.Tag as String) + "]");
+                        item.Tag = bookmark;
+                        item.Click += (o, a) =>
                         {
-                            CurrentTB = b.TB;
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show(ex.Message);
-                            return;
-                        }
-                        b.DoVisible();
-                    };
-                }
+                            var toolStripItem = o as ToolStripItem;
+                            if (toolStripItem != null)
+                                                    {
+                                                        var b = (Bookmark)toolStripItem.Tag;
+                                                        try
+                                                        {
+                                                            CurrentTb = b.TB;
+                                                        }
+                                                        catch (Exception ex)
+                                                        {
+                                                            MessageBox.Show(ex.Message);
+                                                            return;
+                                                        }
+                                                        b.DoVisible();
+                                                    }
+                        };
+                    }
             }
         }
 
@@ -948,15 +924,22 @@ namespace NodeMCU_Studio_2015
             }
 
             foreach (FATabStripItem tab in tsFiles.Items)
-                (tab.Controls[0] as FastColoredTextBox).ShowFoldingLines = btShowFoldingLines.Checked;
-            if (CurrentTB != null)
-                CurrentTB.Invalidate();
+            {
+                var fastColoredTextBox = tab.Controls[0] as FastColoredTextBox;
+                if (fastColoredTextBox != null)
+                    fastColoredTextBox.ShowFoldingLines = btShowFoldingLines.Checked;
+            }
+            CurrentTb?.Invalidate();
         }
 
         private void Zoom_click(object sender, EventArgs e)
         {
-            if (CurrentTB != null)
-                CurrentTB.Zoom = int.Parse((sender as ToolStripItem).Tag.ToString());
+            if (CurrentTb != null)
+            {
+                var toolStripItem = sender as ToolStripItem;
+                if (toolStripItem != null)
+                    CurrentTb.Zoom = int.Parse(toolStripItem.Tag.ToString());
+            }
         }
 
         private void toolStripRescanButton_Click(object sender, EventArgs e)
@@ -969,71 +952,71 @@ namespace NodeMCU_Studio_2015
             int index = toolStripComboBoxSerialPort.SelectedIndex;
             if (index < 0)
             {
-                MessageBox.Show("No serial port selected!");
+                MessageBox.Show(Resources.no_serial_port_selected);
                 return;
             }
 
             if (tsFiles.SelectedItem == null)
             {
-                MessageBox.Show("No file selected!");
+                MessageBox.Show(Resources.no_file_selected);
                 return;
             }
 
-            string[] ports = toolStripComboBoxSerialPort.ComboBox.DataSource as string[];
-            toolStripDownloadButton.Enabled = false;
-            toolStripRunButton.Enabled = false;
-            string filename = System.IO.Path.GetFileName(tsFiles.SelectedItem.Tag as string);
-            string port = ports[index];
-
-            new System.Threading.Thread(() =>
+            if (toolStripComboBoxSerialPort.ComboBox != null)
             {
-                try
+                string[] ports = toolStripComboBoxSerialPort.ComboBox.DataSource as string[];
+                toolStripDownloadButton.Enabled = false;
+                toolStripRunButton.Enabled = false;
+                string filename = Path.GetFileName(tsFiles.SelectedItem.Tag as string);
+                if (ports != null)
                 {
-                    if (!SerialPort.GetInstance().Open(port))
+                    string port = ports[index];
+
+                    new Thread(() =>
                     {
-                        MessageBox.Show("Cannot connect to device.");
-                    } else if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("file.remove(\"{0}\")", filename)))
-                    {
-                        MessageBox.Show("Download to device failed.");
-                    }
-                    else if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("file.open(\"{0}\")", filename)))
-                    {
-                        MessageBox.Show("Download to device failed.");
-                    }
-                    else
-                    {
-                        foreach (var line in CurrentTB.Text.Split('\n'))
+                        try
                         {
-                            if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("file.writeline(\"{0}\")", System.Text.RegularExpressions.Regex.Escape(line))))
+                            if (!SerialPort.GetInstance().Open(port))
                             {
-                                MessageBox.Show("Download to device failed.");
-                                break;
+                                MessageBox.Show(Resources.cannot_connect_to_device);
+                            } else if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("file.remove(\"{0}\")", filename)))
+                            {
+                                MessageBox.Show(Resources.download_to_device_failed);
                             }
-                        }
+                            else if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("file.open(\"{0}\")", filename)))
+                            {
+                                MessageBox.Show(Resources.download_to_device_failed);
+                            }
+                            else
+                            {
+                                if (CurrentTb.Text.Split('\n').Any(line => !SerialPort.GetInstance().ExecuteAndWait(string.Format("file.writeline(\"{0}\")", Regex.Escape(line)))))
+                                {
+                                    MessageBox.Show(Resources.download_to_device_failed);
+                                }
 
-                        if (!SerialPort.GetInstance().ExecuteAndWait("file.close()"))
+                                MessageBox.Show(!SerialPort.GetInstance().ExecuteAndWait("file.close()")
+                                    ? Resources.download_to_device_failed
+                                    : "Download to device succeeded.");
+                            }
+                        } catch
                         {
-                            MessageBox.Show("Download to device failed.");
-                        } else {
-                            MessageBox.Show("Download to device succeeded.");
+                            MessageBox.Show(Resources.download_to_device_failed);
                         }
-                    }
-                } catch
-                {
-                    MessageBox.Show("Download to device failed.");
-                }
 
-                context.Post((_) =>
-                {
-                    toolStripDownloadButton.Enabled = true;
-                    toolStripRunButton.Enabled = true;
-                }, null);
-            }).Start();
+                        _context.Post(_ =>
+                        {
+                            toolStripDownloadButton.Enabled = true;
+                            toolStripRunButton.Enabled = true;
+                        }, null);
+                    }).Start();
+                }
+            }
         }
 
         private void RefreshSerialPort()
         {
-            toolStripComboBoxSerialPort.ComboBox.DataSource = SerialPort.GetInstance().GetPortNames();
+            if (toolStripComboBoxSerialPort.ComboBox != null)
+                toolStripComboBoxSerialPort.ComboBox.DataSource = SerialPort.GetInstance().GetPortNames();
         }
 
         private void toolStripRunButton_Click(object sender, EventArgs e)
@@ -1041,50 +1024,56 @@ namespace NodeMCU_Studio_2015
             int index = toolStripComboBoxSerialPort.SelectedIndex;
             if (index < 0)
             {
-                MessageBox.Show("No serial port selected!");
+                MessageBox.Show(Resources.no_serial_port_selected);
                 return;
             }
 
             if (tsFiles.SelectedItem == null)
             {
-                MessageBox.Show("No file selected!");
+                MessageBox.Show(Resources.no_file_selected);
                 return;
             }
 
-            string[] ports = toolStripComboBoxSerialPort.ComboBox.DataSource as string[];
-            toolStripDownloadButton.Enabled = false;
-            toolStripRunButton.Enabled = false;
-            string filename = System.IO.Path.GetFileName(tsFiles.SelectedItem.Tag as string);
-            string port = ports[index];
-
-            new System.Threading.Thread(() =>
+            if (toolStripComboBoxSerialPort.ComboBox != null)
             {
-                try
+                string[] ports = toolStripComboBoxSerialPort.ComboBox.DataSource as string[];
+                toolStripDownloadButton.Enabled = false;
+                toolStripRunButton.Enabled = false;
+                string filename = Path.GetFileName(tsFiles.SelectedItem.Tag as string);
+                if (ports != null)
                 {
-                    if (!SerialPort.GetInstance().Open(port))
-                    {
-                        MessageBox.Show("Cannot connect to device.");
-                    }
-                    else if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("dofile(\"{0}\")", filename)))
-                    {
-                        MessageBox.Show("Execute failed.");
-                    }
-                    else 
-                    {
-                        MessageBox.Show("Execute succeeded.");
-                    }
-                }
-                catch
-                {
-                    MessageBox.Show("Execute failed.");
-                }
+                    string port = ports[index];
 
-                context.Post((_) =>
-                {
-                    toolStripDownloadButton.Enabled = true;
-                    toolStripRunButton.Enabled = true;
-                }, null);
-            }).Start();
+                    new Thread(() =>
+                    {
+                        try
+                        {
+                            if (!SerialPort.GetInstance().Open(port))
+                            {
+                                MessageBox.Show(Resources.cannot_connect_to_device);
+                            }
+                            else if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("dofile(\"{0}\")", filename)))
+                            {
+                                MessageBox.Show(Resources.execute_failed);
+                            }
+                            else 
+                            {
+                                MessageBox.Show(Resources.excute_succeeded);
+                            }
+                        }
+                        catch
+                        {
+                            MessageBox.Show(Resources.execute_failed);
+                        }
+
+                        _context.Post(_ =>
+                        {
+                            toolStripDownloadButton.Enabled = true;
+                            toolStripRunButton.Enabled = true;
+                        }, null);
+                    }).Start();
+                }
+            }
         }
 
         private void toolStripCloseButton_Click(object sender, EventArgs e)
@@ -1095,17 +1084,17 @@ namespace NodeMCU_Studio_2015
 
     public class InvisibleCharsRenderer : Style
     {
-        Pen pen;
+        readonly Pen _pen;
 
         public InvisibleCharsRenderer(Pen pen)
         {
-            this.pen = pen;
+            _pen = pen;
         }
 
         public override void Draw(Graphics gr, Point position, Range range)
         {
             var tb = range.tb;
-            using(Brush brush = new SolidBrush(pen.Color))
+            using(Brush brush = new SolidBrush(_pen.Color))
             foreach (var place in range)
             {
                 switch (tb[place].c)
@@ -1113,7 +1102,7 @@ namespace NodeMCU_Studio_2015
                     case ' ':
                         var point = tb.PlaceToPoint(place);
                         point.Offset(tb.CharWidth / 2, tb.CharHeight / 2);
-                        gr.DrawLine(pen, point.X, point.Y, point.X + 1, point.Y);
+                        gr.DrawLine(_pen, point.X, point.Y, point.X + 1, point.Y);
                         break;
                 }
 
@@ -1129,6 +1118,6 @@ namespace NodeMCU_Studio_2015
 
     public class TbInfo
     {
-        public AutocompleteMenu popupMenu;
+        public AutocompleteMenu PopupMenu;
     }
 }
