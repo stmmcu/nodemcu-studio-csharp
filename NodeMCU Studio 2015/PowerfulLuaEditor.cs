@@ -36,7 +36,6 @@ namespace NodeMCU_Studio_2015
             copyToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("copyToolStripButton.Image")));
             cutToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("cutToolStripButton.Image")));
             pasteToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("pasteToolStripButton.Image")));
-            Icon = ((System.Drawing.Icon)(resources.GetObject("nodemcu.ico")));
 
             ByteArrayToList(Properties.Resources.keywords, keywords);
             ByteArrayToList(Properties.Resources.methods, methods);
