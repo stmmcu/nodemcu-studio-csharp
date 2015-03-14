@@ -288,6 +288,9 @@
             // 
             // showFoldingLineToolStripMenuItem
             // 
+            this.showFoldingLineToolStripMenuItem.Checked = true;
+            this.showFoldingLineToolStripMenuItem.CheckOnClick = true;
+            this.showFoldingLineToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.showFoldingLineToolStripMenuItem.Image = global::NodeMCU_Studio_2015.Properties.Resources.btShowFoldingLines_Image;
             this.showFoldingLineToolStripMenuItem.Name = "showFoldingLineToolStripMenuItem";
             this.showFoldingLineToolStripMenuItem.Size = new System.Drawing.Size(202, 22);
