@@ -13,22 +13,15 @@ namespace NodeMCU_Studio_2015
 {
     class SerialPort : IDisposable
     {
-        private static SerialPort instance;
-        private readonly SP currentSP;
+        private static SerialPort _instance;
+        private readonly SP _currentSp;
+        private readonly object _lock = new object();
 
-        private const int MAX_RETRIES = 100;
+        private const int MaxRetries = 100;
 
         private SerialPort()
         {
-            currentSP = new SP();
-        }
-
-        private void TriggerIsOpenChanged()
-        {
-            if (IsOpenChanged != null)
-            {
-                IsOpenChanged(currentSP.IsOpen);
-            }
+            _currentSp = new SP();
         }
 
         public string[] GetPortNames()
@@ -38,36 +31,54 @@ namespace NodeMCU_Studio_2015
 
         public void Close()
         {
-            if (currentSP.IsOpen)
+            if (_currentSp.IsOpen)
             {
-                currentSP.Close();
-                if (IsOpenChanged != null)
-                {
-                    IsOpenChanged(currentSP.IsOpen);
-                }
+                _currentSp.Close();
+                IsOpenChanged?.Invoke(_currentSp.IsOpen);
             }
         }
 
         public bool Open(string port)
         {
             Close();
-            currentSP.BaudRate = 9600;
-            currentSP.ReadTimeout = 0;
-            currentSP.PortName = port;
-            currentSP.Open();
-            if (IsOpenChanged != null)
+            _currentSp.BaudRate = 9600;
+            _currentSp.ReadTimeout = 0;
+            _currentSp.PortName = port;
+            _currentSp.Open();
+            IsOpenChanged?.Invoke(_currentSp.IsOpen);
+            return _currentSp.IsOpen;
+        }
+
+        public IDisposable Use()
+        {
+            System.Threading.Monitor.Enter(_lock);
+            IsWorkingChanged?.Invoke(true);
+            return new UnLock(_lock, IsWorkingChanged);
+        }
+
+        private class UnLock : IDisposable
+        {
+            private readonly Object _lock;
+            private readonly Action<bool> _isWorkingChanged;
+            public UnLock(Object obj, Action<bool> changed)
             {
-                IsOpenChanged(currentSP.IsOpen);
+                _lock = obj;
+                _isWorkingChanged = changed;
             }
-            return currentSP.IsOpen;
+            public void Dispose()
+            {
+                _isWorkingChanged?.Invoke(false);
+                System.Threading.Monitor.Exit(_lock);
+            }
         }
 
         public bool ExecuteAndWait(string command)
         {
-            currentSP.WriteLine(command);
-            for (var i = 0;i < MAX_RETRIES;i++)
+            _currentSp.WriteLine(command);
+            for (var i = 0;i < MaxRetries;i++)
             {
-                string s = currentSP.ReadExisting();
+                string s = _currentSp.ReadExisting();
+                OnDataReceived?.Invoke(s);
                 if (s.Contains(">"))
                 {
                     return true;
@@ -79,18 +90,20 @@ namespace NodeMCU_Studio_2015
 
         public static SerialPort GetInstance()
         {
-            if (instance == null)
+            if (_instance == null)
             {
-                instance = new SerialPort();
+                _instance = new SerialPort();
             }
-            return instance;
+            return _instance;
         }
 
         public void Dispose()
         {
-            currentSP.Dispose();
+            _currentSp.Dispose();
         }
 
         public event Action<bool> IsOpenChanged;
+        public event Action<string> OnDataReceived;
+        public event Action<bool> IsWorkingChanged;
     }
 }

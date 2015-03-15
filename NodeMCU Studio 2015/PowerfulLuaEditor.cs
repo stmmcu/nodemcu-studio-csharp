@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
@@ -26,6 +27,7 @@ namespace NodeMCU_Studio_2015
         readonly Color _currentLineColor = Color.FromArgb(100, 210, 210, 255);
         readonly Color _changedLineColor = Color.FromArgb(255, 230, 230, 255);
         readonly SynchronizationContext _context;
+        private Console _console;
 
         readonly Window _parent;
 
@@ -51,6 +53,15 @@ namespace NodeMCU_Studio_2015
 
             SerialPort.GetInstance().IsOpenChanged += PowerfulLuaEditor_IsOpenChanged;
             PowerfulLuaEditor_IsOpenChanged(false);
+
+            SerialPort.GetInstance().IsWorkingChanged += delegate(bool isWorking)
+            {
+                _context.Post(_ =>
+                {
+                    toolStripDownloadButton.Enabled = !isWorking;
+                    toolStripRunButton.Enabled = !isWorking;
+                }, null);
+            };
         }
 
         private void PowerfulLuaEditor_IsOpenChanged(bool isOpen)
@@ -496,7 +507,7 @@ namespace NodeMCU_Studio_2015
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                MessageBox.Show(ex.ToString());
             }
         }
 
@@ -894,19 +905,19 @@ namespace NodeMCU_Studio_2015
                         {
                             var toolStripItem = o as ToolStripItem;
                             if (toolStripItem != null)
-                                                    {
-                                                        var b = (Bookmark)toolStripItem.Tag;
-                                                        try
-                                                        {
-                                                            CurrentTb = b.TB;
-                                                        }
-                                                        catch (Exception ex)
-                                                        {
-                                                            MessageBox.Show(ex.Message);
-                                                            return;
-                                                        }
-                                                        b.DoVisible();
-                                                    }
+                                {
+                                    var b = (Bookmark)toolStripItem.Tag;
+                                    try
+                                    {
+                                        CurrentTb = b.TB;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        MessageBox.Show(ex.Message);
+                                        return;
+                                    }
+                                    b.DoVisible();
+                                }
                         };
                     }
             }
@@ -965,8 +976,6 @@ namespace NodeMCU_Studio_2015
             if (toolStripComboBoxSerialPort.ComboBox != null)
             {
                 string[] ports = toolStripComboBoxSerialPort.ComboBox.DataSource as string[];
-                toolStripDownloadButton.Enabled = false;
-                toolStripRunButton.Enabled = false;
                 string filename = Path.GetFileName(tsFiles.SelectedItem.Tag as string);
                 if (ports != null)
                 {
@@ -974,43 +983,74 @@ namespace NodeMCU_Studio_2015
 
                     new Thread(() =>
                     {
-                        try
+                        using (SerialPort.GetInstance().Use())
                         {
-                            if (!SerialPort.GetInstance().Open(port))
+                            try
                             {
-                                MessageBox.Show(Resources.cannot_connect_to_device);
-                            } else if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("file.remove(\"{0}\")", filename)))
-                            {
-                                MessageBox.Show(Resources.download_to_device_failed);
-                            }
-                            else if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("file.open(\"{0}\")", filename)))
-                            {
-                                MessageBox.Show(Resources.download_to_device_failed);
-                            }
-                            else
-                            {
-                                if (CurrentTb.Text.Split('\n').Any(line => !SerialPort.GetInstance().ExecuteAndWait(string.Format("file.writeline(\"{0}\")", Regex.Escape(line)))))
+                                if (!SerialPort.GetInstance().Open(port))
+                                {
+                                    MessageBox.Show(Resources.cannot_connect_to_device);
+                                }
+                                else if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("file.remove(\"{0}\")", filename)))
                                 {
                                     MessageBox.Show(Resources.download_to_device_failed);
                                 }
+                                else if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("file.open(\"{0}\", \"w+\")", filename)))
+                                {
+                                    MessageBox.Show(Resources.download_to_device_failed);
+                                }
+                                else
+                                {
+                                    if (CurrentTb.Text.Split('\n').Any(line => !SerialPort.GetInstance().ExecuteAndWait(string.Format("file.writeline(\"{0}\")", Escape(line)))))
+                                    {
+                                        MessageBox.Show(Resources.download_to_device_failed);
+                                    }
 
-                                MessageBox.Show(!SerialPort.GetInstance().ExecuteAndWait("file.close()")
-                                    ? Resources.download_to_device_failed
-                                    : "Download to device succeeded.");
+                                    MessageBox.Show(!SerialPort.GetInstance().ExecuteAndWait("file.close()")
+                                        ? Resources.download_to_device_failed
+                                        : "Download to device succeeded.");
+                                }
                             }
-                        } catch
-                        {
-                            MessageBox.Show(Resources.download_to_device_failed);
+                            catch
+                            {
+                                MessageBox.Show(Resources.download_to_device_failed);
+                            }
                         }
-
-                        _context.Post(_ =>
-                        {
-                            toolStripDownloadButton.Enabled = true;
-                            toolStripRunButton.Enabled = true;
-                        }, null);
                     }).Start();
                 }
             }
+        }
+
+        private string Escape(string command)
+        {
+            const char backSlash = '\\';
+            const char slash = '/';
+            const char doubleQuote = '"';
+             
+            var output = new StringBuilder(command.Length);
+            foreach (var c in command)
+            {
+                switch (c)
+                {
+                    case backSlash:
+                        output.AppendFormat("{0}{0}", backSlash);
+                        break;
+
+                    case slash:
+                        output.AppendFormat("{0}{1}", backSlash, slash);
+                        break;
+
+                    case doubleQuote:
+                        output.AppendFormat("{0}{1}", backSlash, doubleQuote);
+                        break;
+
+                    default:
+                        output.Append(c);
+                        break;
+                }
+            }
+
+            return output.ToString();
         }
 
         private void RefreshSerialPort()
@@ -1037,8 +1077,6 @@ namespace NodeMCU_Studio_2015
             if (toolStripComboBoxSerialPort.ComboBox != null)
             {
                 string[] ports = toolStripComboBoxSerialPort.ComboBox.DataSource as string[];
-                toolStripDownloadButton.Enabled = false;
-                toolStripRunButton.Enabled = false;
                 string filename = Path.GetFileName(tsFiles.SelectedItem.Tag as string);
                 if (ports != null)
                 {
@@ -1046,31 +1084,28 @@ namespace NodeMCU_Studio_2015
 
                     new Thread(() =>
                     {
-                        try
+                        using (SerialPort.GetInstance().Use())
                         {
-                            if (!SerialPort.GetInstance().Open(port))
+                            try
                             {
-                                MessageBox.Show(Resources.cannot_connect_to_device);
+                                if (!SerialPort.GetInstance().Open(port))
+                                {
+                                    MessageBox.Show(Resources.cannot_connect_to_device);
+                                }
+                                else if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("dofile(\"{0}\")", filename)))
+                                {
+                                    MessageBox.Show(Resources.execute_failed);
+                                }
+                                else
+                                {
+                                    MessageBox.Show(Resources.excute_succeeded);
+                                }
                             }
-                            else if (!SerialPort.GetInstance().ExecuteAndWait(string.Format("dofile(\"{0}\")", filename)))
+                            catch
                             {
                                 MessageBox.Show(Resources.execute_failed);
                             }
-                            else 
-                            {
-                                MessageBox.Show(Resources.excute_succeeded);
-                            }
                         }
-                        catch
-                        {
-                            MessageBox.Show(Resources.execute_failed);
-                        }
-
-                        _context.Post(_ =>
-                        {
-                            toolStripDownloadButton.Enabled = true;
-                            toolStripRunButton.Enabled = true;
-                        }, null);
                     }).Start();
                 }
             }
@@ -1079,6 +1114,21 @@ namespace NodeMCU_Studio_2015
         private void toolStripCloseButton_Click(object sender, EventArgs e)
         {
             SerialPort.GetInstance().Close();
+        }
+
+        private void toolStripOpenConsoleButton_Click(object sender, EventArgs e)
+        {
+            if (_console != null)
+            {
+                _console.Activate();
+            }
+            else
+            {
+                _console = new Console();
+                _console.Closed += delegate { _console = null; };
+                _console.Show();
+            }
+            
         }
     }
 

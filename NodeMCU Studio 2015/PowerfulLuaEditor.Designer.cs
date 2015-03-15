@@ -53,6 +53,7 @@
             this.executeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.executeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.closeSerialPortConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ssMain = new System.Windows.Forms.StatusStrip();
             this.lbWordUnderMouse = new System.Windows.Forms.ToolStripStatusLabel();
             this.btZoom = new System.Windows.Forms.ToolStripSplitButton();
@@ -120,6 +121,7 @@
             this.clImage = new System.Windows.Forms.DataGridViewImageColumn();
             this.clName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ilAutocomplete = new System.Windows.Forms.ImageList(this.components);
+            this.toolStripOpenConsoleButton = new System.Windows.Forms.ToolStripButton();
             this.msMain.SuspendLayout();
             this.ssMain.SuspendLayout();
             this.tsMain.SuspendLayout();
@@ -303,14 +305,15 @@
             this.rescanToolStripMenuItem,
             this.executeToolStripMenuItem,
             this.executeToolStripMenuItem1,
-            this.closeSerialPortConnectionToolStripMenuItem});
+            this.closeSerialPortConnectionToolStripMenuItem,
+            this.openConsoleToolStripMenuItem});
             this.deviceToolStripMenuItem.Name = "deviceToolStripMenuItem";
             this.deviceToolStripMenuItem.Size = new System.Drawing.Size(58, 21);
             this.deviceToolStripMenuItem.Text = "Device";
             // 
             // rescanToolStripMenuItem
             // 
-            this.rescanToolStripMenuItem.Image = global::NodeMCU_Studio_2015.Properties.Resources.refresh;
+            this.rescanToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("rescanToolStripMenuItem.Image")));
             this.rescanToolStripMenuItem.Name = "rescanToolStripMenuItem";
             this.rescanToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.rescanToolStripMenuItem.Text = "Rescan";
@@ -335,6 +338,14 @@
             this.closeSerialPortConnectionToolStripMenuItem.Name = "closeSerialPortConnectionToolStripMenuItem";
             this.closeSerialPortConnectionToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.closeSerialPortConnectionToolStripMenuItem.Text = "Close Serial Port Connection";
+            // 
+            // openConsoleToolStripMenuItem
+            // 
+            this.openConsoleToolStripMenuItem.Image = global::NodeMCU_Studio_2015.Properties.Resources.console;
+            this.openConsoleToolStripMenuItem.Name = "openConsoleToolStripMenuItem";
+            this.openConsoleToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.openConsoleToolStripMenuItem.Text = "Open Console";
+            this.openConsoleToolStripMenuItem.Click += new System.EventHandler(this.toolStripOpenConsoleButton_Click);
             // 
             // ssMain
             // 
@@ -449,7 +460,8 @@
             this.toolStripRescanButton,
             this.toolStripDownloadButton,
             this.toolStripRunButton,
-            this.toolStripCloseButton});
+            this.toolStripCloseButton,
+            this.toolStripOpenConsoleButton});
             this.tsMain.Location = new System.Drawing.Point(0, 25);
             this.tsMain.Name = "tsMain";
             this.tsMain.Size = new System.Drawing.Size(871, 25);
@@ -675,7 +687,7 @@
             // toolStripRescanButton
             // 
             this.toolStripRescanButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripRescanButton.Image = global::NodeMCU_Studio_2015.Properties.Resources.refresh;
+            this.toolStripRescanButton.Image = ((System.Drawing.Image)(resources.GetObject("toolStripRescanButton.Image")));
             this.toolStripRescanButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripRescanButton.Name = "toolStripRescanButton";
             this.toolStripRescanButton.Size = new System.Drawing.Size(23, 22);
@@ -948,6 +960,16 @@
             this.ilAutocomplete.Images.SetKeyName(1, "app_16x16.png");
             this.ilAutocomplete.Images.SetKeyName(2, "1302166543_virtualbox.png");
             // 
+            // toolStripOpenConsoleButton
+            // 
+            this.toolStripOpenConsoleButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripOpenConsoleButton.Image = global::NodeMCU_Studio_2015.Properties.Resources.console;
+            this.toolStripOpenConsoleButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripOpenConsoleButton.Name = "toolStripOpenConsoleButton";
+            this.toolStripOpenConsoleButton.Size = new System.Drawing.Size(23, 22);
+            this.toolStripOpenConsoleButton.ToolTipText = "Open Console";
+            this.toolStripOpenConsoleButton.Click += new System.EventHandler(this.toolStripOpenConsoleButton_Click);
+            // 
             // PowerfulLuaEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -1071,5 +1093,7 @@
         private System.Windows.Forms.ToolStripMenuItem executeToolStripMenuItem1;
         private System.Windows.Forms.ToolStripButton toolStripCloseButton;
         private System.Windows.Forms.ToolStripMenuItem closeSerialPortConnectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openConsoleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton toolStripOpenConsoleButton;
     }
 }
