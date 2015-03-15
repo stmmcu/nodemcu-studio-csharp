@@ -53,7 +53,6 @@
             this.executeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.executeToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.closeSerialPortConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openConsoleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ssMain = new System.Windows.Forms.StatusStrip();
             this.lbWordUnderMouse = new System.Windows.Forms.ToolStripStatusLabel();
             this.btZoom = new System.Windows.Forms.ToolStripSplitButton();
@@ -90,6 +89,7 @@
             this.toolStripComboBoxSerialPort = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripRescanButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripDownloadButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripUploadButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripRunButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripCloseButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
@@ -121,13 +121,20 @@
             this.clImage = new System.Windows.Forms.DataGridViewImageColumn();
             this.clName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ilAutocomplete = new System.Windows.Forms.ImageList(this.components);
-            this.toolStripOpenConsoleButton = new System.Windows.Forms.ToolStripButton();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBoxCommand = new System.Windows.Forms.TextBox();
+            this.buttonExecute = new System.Windows.Forms.Button();
+            this.textBoxConsole = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.msMain.SuspendLayout();
             this.ssMain.SuspendLayout();
             this.tsMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tsFiles)).BeginInit();
             this.cmMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvObjectExplorer)).BeginInit();
+            this.panel1.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // msMain
@@ -139,7 +146,7 @@
             this.deviceToolStripMenuItem});
             this.msMain.Location = new System.Drawing.Point(0, 0);
             this.msMain.Name = "msMain";
-            this.msMain.Size = new System.Drawing.Size(871, 25);
+            this.msMain.Size = new System.Drawing.Size(918, 25);
             this.msMain.TabIndex = 0;
             this.msMain.Text = "menuStrip1";
             // 
@@ -305,8 +312,7 @@
             this.rescanToolStripMenuItem,
             this.executeToolStripMenuItem,
             this.executeToolStripMenuItem1,
-            this.closeSerialPortConnectionToolStripMenuItem,
-            this.openConsoleToolStripMenuItem});
+            this.closeSerialPortConnectionToolStripMenuItem});
             this.deviceToolStripMenuItem.Name = "deviceToolStripMenuItem";
             this.deviceToolStripMenuItem.Size = new System.Drawing.Size(58, 21);
             this.deviceToolStripMenuItem.Text = "Device";
@@ -339,22 +345,14 @@
             this.closeSerialPortConnectionToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.closeSerialPortConnectionToolStripMenuItem.Text = "Close Serial Port Connection";
             // 
-            // openConsoleToolStripMenuItem
-            // 
-            this.openConsoleToolStripMenuItem.Image = global::NodeMCU_Studio_2015.Properties.Resources.console;
-            this.openConsoleToolStripMenuItem.Name = "openConsoleToolStripMenuItem";
-            this.openConsoleToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
-            this.openConsoleToolStripMenuItem.Text = "Open Console";
-            this.openConsoleToolStripMenuItem.Click += new System.EventHandler(this.toolStripOpenConsoleButton_Click);
-            // 
             // ssMain
             // 
             this.ssMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lbWordUnderMouse,
             this.btZoom});
-            this.ssMain.Location = new System.Drawing.Point(0, 315);
+            this.ssMain.Location = new System.Drawing.Point(0, 539);
             this.ssMain.Name = "ssMain";
-            this.ssMain.Size = new System.Drawing.Size(871, 23);
+            this.ssMain.Size = new System.Drawing.Size(918, 23);
             this.ssMain.TabIndex = 2;
             this.ssMain.Text = "statusStrip1";
             // 
@@ -363,7 +361,7 @@
             this.lbWordUnderMouse.AutoSize = false;
             this.lbWordUnderMouse.ForeColor = System.Drawing.Color.Gray;
             this.lbWordUnderMouse.Name = "lbWordUnderMouse";
-            this.lbWordUnderMouse.Size = new System.Drawing.Size(798, 18);
+            this.lbWordUnderMouse.Size = new System.Drawing.Size(845, 18);
             this.lbWordUnderMouse.Spring = true;
             this.lbWordUnderMouse.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -459,12 +457,12 @@
             this.toolStripComboBoxSerialPort,
             this.toolStripRescanButton,
             this.toolStripDownloadButton,
+            this.toolStripUploadButton,
             this.toolStripRunButton,
-            this.toolStripCloseButton,
-            this.toolStripOpenConsoleButton});
+            this.toolStripCloseButton});
             this.tsMain.Location = new System.Drawing.Point(0, 25);
             this.tsMain.Name = "tsMain";
-            this.tsMain.Size = new System.Drawing.Size(871, 25);
+            this.tsMain.Size = new System.Drawing.Size(918, 25);
             this.tsMain.TabIndex = 3;
             this.tsMain.Text = "toolStrip1";
             // 
@@ -704,6 +702,16 @@
             this.toolStripDownloadButton.ToolTipText = "Download";
             this.toolStripDownloadButton.Click += new System.EventHandler(this.toolStripDownloadButton_Click);
             // 
+            // toolStripUploadButton
+            // 
+            this.toolStripUploadButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripUploadButton.Image = global::NodeMCU_Studio_2015.Properties.Resources.upload;
+            this.toolStripUploadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripUploadButton.Name = "toolStripUploadButton";
+            this.toolStripUploadButton.Size = new System.Drawing.Size(23, 22);
+            this.toolStripUploadButton.ToolTipText = "Upload";
+            this.toolStripUploadButton.Click += new System.EventHandler(this.toolStripUploadButton_Click);
+            // 
             // toolStripRunButton
             // 
             this.toolStripRunButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -741,11 +749,13 @@
             // 
             // tsFiles
             // 
-            this.tsFiles.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tsFiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tsFiles.Font = new System.Drawing.Font("Tahoma", 8.25F);
             this.tsFiles.Location = new System.Drawing.Point(175, 50);
             this.tsFiles.Name = "tsFiles";
-            this.tsFiles.Size = new System.Drawing.Size(696, 265);
+            this.tsFiles.Size = new System.Drawing.Size(743, 313);
             this.tsFiles.TabIndex = 0;
             this.tsFiles.Text = "faTabStrip1";
             this.tsFiles.TabStripItemClosing += new FarsiLibrary.Win.TabStripItemClosingHandler(this.tsFiles_TabStripItemClosing);
@@ -755,7 +765,7 @@
             // 
             this.splitter1.Location = new System.Drawing.Point(172, 50);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(3, 265);
+            this.splitter1.Size = new System.Drawing.Size(3, 489);
             this.splitter1.TabIndex = 5;
             this.splitter1.TabStop = false;
             // 
@@ -931,7 +941,7 @@
             this.dgvObjectExplorer.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Green;
             this.dgvObjectExplorer.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dgvObjectExplorer.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvObjectExplorer.Size = new System.Drawing.Size(172, 265);
+            this.dgvObjectExplorer.Size = new System.Drawing.Size(172, 489);
             this.dgvObjectExplorer.TabIndex = 6;
             this.dgvObjectExplorer.VirtualMode = true;
             this.dgvObjectExplorer.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvObjectExplorer_CellMouseDoubleClick);
@@ -960,21 +970,84 @@
             this.ilAutocomplete.Images.SetKeyName(1, "app_16x16.png");
             this.ilAutocomplete.Images.SetKeyName(2, "1302166543_virtualbox.png");
             // 
-            // toolStripOpenConsoleButton
+            // label1
             // 
-            this.toolStripOpenConsoleButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripOpenConsoleButton.Image = global::NodeMCU_Studio_2015.Properties.Resources.console;
-            this.toolStripOpenConsoleButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripOpenConsoleButton.Name = "toolStripOpenConsoleButton";
-            this.toolStripOpenConsoleButton.Size = new System.Drawing.Size(23, 22);
-            this.toolStripOpenConsoleButton.ToolTipText = "Open Console";
-            this.toolStripOpenConsoleButton.Click += new System.EventHandler(this.toolStripOpenConsoleButton_Click);
+            this.label1.Location = new System.Drawing.Point(3, 0);
+            this.label1.MaximumSize = new System.Drawing.Size(58, 21);
+            this.label1.MinimumSize = new System.Drawing.Size(58, 21);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(58, 21);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Command:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // textBoxCommand
+            // 
+            this.textBoxCommand.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxCommand.Location = new System.Drawing.Point(61, 3);
+            this.textBoxCommand.Name = "textBoxCommand";
+            this.textBoxCommand.Size = new System.Drawing.Size(605, 21);
+            this.textBoxCommand.TabIndex = 8;
+            // 
+            // buttonExecute
+            // 
+            this.buttonExecute.Enabled = false;
+            this.buttonExecute.Location = new System.Drawing.Point(672, 3);
+            this.buttonExecute.MaximumSize = new System.Drawing.Size(71, 19);
+            this.buttonExecute.MinimumSize = new System.Drawing.Size(71, 19);
+            this.buttonExecute.Name = "buttonExecute";
+            this.buttonExecute.Size = new System.Drawing.Size(71, 19);
+            this.buttonExecute.TabIndex = 9;
+            this.buttonExecute.Text = "Execute";
+            this.buttonExecute.UseVisualStyleBackColor = true;
+            this.buttonExecute.Click += new System.EventHandler(this.buttonExecute_Click);
+            // 
+            // textBoxConsole
+            // 
+            this.textBoxConsole.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxConsole.Location = new System.Drawing.Point(0, 24);
+            this.textBoxConsole.Multiline = true;
+            this.textBoxConsole.Name = "textBoxConsole";
+            this.textBoxConsole.ReadOnly = true;
+            this.textBoxConsole.Size = new System.Drawing.Size(740, 149);
+            this.textBoxConsole.TabIndex = 10;
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.tableLayoutPanel1);
+            this.panel1.Controls.Add(this.textBoxConsole);
+            this.panel1.Location = new System.Drawing.Point(175, 366);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(743, 173);
+            this.panel1.TabIndex = 11;
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.ColumnCount = 3;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 58F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 71F));
+            this.tableLayoutPanel1.Controls.Add(this.textBoxCommand, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.buttonExecute, 2, 0);
+            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(740, 25);
+            this.tableLayoutPanel1.TabIndex = 10;
             // 
             // PowerfulLuaEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(871, 338);
+            this.ClientSize = new System.Drawing.Size(918, 562);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.tsFiles);
             this.Controls.Add(this.splitter1);
             this.Controls.Add(this.dgvObjectExplorer);
@@ -983,6 +1056,7 @@
             this.Controls.Add(this.ssMain);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.msMain;
+            this.MinimumSize = new System.Drawing.Size(850, 600);
             this.Name = "PowerfulLuaEditor";
             this.Text = "NodeMCU Studio 2015";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
@@ -996,6 +1070,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.tsFiles)).EndInit();
             this.cmMain.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvObjectExplorer)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1093,7 +1171,12 @@
         private System.Windows.Forms.ToolStripMenuItem executeToolStripMenuItem1;
         private System.Windows.Forms.ToolStripButton toolStripCloseButton;
         private System.Windows.Forms.ToolStripMenuItem closeSerialPortConnectionToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openConsoleToolStripMenuItem;
-        private System.Windows.Forms.ToolStripButton toolStripOpenConsoleButton;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textBoxCommand;
+        private System.Windows.Forms.Button buttonExecute;
+        private System.Windows.Forms.TextBox textBoxConsole;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.ToolStripButton toolStripUploadButton;
     }
 }

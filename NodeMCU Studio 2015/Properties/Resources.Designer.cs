@@ -452,6 +452,15 @@ namespace NodeMCU_Studio_2015.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please enter file name to upload.
+        /// </summary>
+        internal static string please_enter_file_name_to_upload {
+            get {
+                return ResourceManager.GetString("please_enter_file_name_to_upload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap printToolStripButton_Image {
@@ -617,6 +626,15 @@ namespace NodeMCU_Studio_2015.Properties {
             get {
                 object obj = ResourceManager.GetObject("unsure", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload failed!.
+        /// </summary>
+        internal static string uplaod_failed {
+            get {
+                return ResourceManager.GetString("uplaod_failed", resourceCulture);
             }
         }
         

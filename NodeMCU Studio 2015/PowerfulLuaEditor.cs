@@ -27,7 +27,6 @@ namespace NodeMCU_Studio_2015
         readonly Color _currentLineColor = Color.FromArgb(100, 210, 210, 255);
         readonly Color _changedLineColor = Color.FromArgb(255, 230, 230, 255);
         readonly SynchronizationContext _context;
-        private Console _console;
 
         readonly Window _parent;
 
@@ -60,6 +59,15 @@ namespace NodeMCU_Studio_2015
                 {
                     toolStripDownloadButton.Enabled = !isWorking;
                     toolStripRunButton.Enabled = !isWorking;
+                    buttonExecute.Enabled = !isWorking;
+                }, null);
+            };
+
+            SerialPort.GetInstance().OnDataReceived += delegate (string s)
+            {
+                _context.Post(_ =>
+                {
+                    textBoxConsole.AppendText(s);
                 }, null);
             };
         }
@@ -131,7 +139,7 @@ namespace NodeMCU_Studio_2015
                 tb.ShowFoldingLines = btShowFoldingLines.Checked;
                 tb.HighlightingRangeType = HighlightingRangeType.VisibleRange;
                 //create autocomplete popup menu
-                AutocompleteMenu popupMenu = new AutocompleteMenu(tb);
+                var popupMenu = new AutocompleteMenu(tb);
                 popupMenu.Items.ImageList = ilAutocomplete;
                 popupMenu.Opening += popupMenu_Opening;
                 BuildAutocompleteMenu(popupMenu);
@@ -279,7 +287,7 @@ namespace NodeMCU_Studio_2015
                 var list = new List<ExplorerItem>();
                 //find classes, methods and properties
                 //Regex regex = new Regex(@"^(?<range>[\w\s]+\b(class|struct|enum|interface)\s+[\w<>,\s]+)|^\s*(public|private|internal|protected)[^\n]+(\n?\s*{|;)?", RegexOptions.Multiline);
-                var regex = new Regex(@"^\s*function\s+[^\s]+\(.*\)|^\s*(local\s+)?[^\s]+\s*=\s*[^\s]+", RegexOptions.Multiline);
+                var regex = new Regex(@"^\s*function\s+[^\s]+\(.*\)|^\s*local\s+[^\s]+", RegexOptions.Multiline);
                 foreach (Match r in regex.Matches(text))
                     try
                     {
@@ -1001,14 +1009,23 @@ namespace NodeMCU_Studio_2015
                                 }
                                 else
                                 {
-                                    if (CurrentTb.Text.Split('\n').Any(line => !SerialPort.GetInstance().ExecuteAndWait(string.Format("file.writeline(\"{0}\")", Escape(line)))))
+                                    if (
+                                        CurrentTb.Text.Split('\n')
+                                            .Any(
+                                                line =>
+                                                    !SerialPort.GetInstance()
+                                                        .ExecuteAndWait(string.Format("file.writeline(\"{0}\")",
+                                                            Escape(line)))))
                                     {
+                                        SerialPort.GetInstance().ExecuteAndWait("file.close()");
                                         MessageBox.Show(Resources.download_to_device_failed);
                                     }
-
-                                    MessageBox.Show(!SerialPort.GetInstance().ExecuteAndWait("file.close()")
+                                    else
+                                    {
+                                        MessageBox.Show(!SerialPort.GetInstance().ExecuteAndWait("file.close()")
                                         ? Resources.download_to_device_failed
                                         : "Download to device succeeded.");
+                                    }
                                 }
                             }
                             catch
@@ -1116,19 +1133,146 @@ namespace NodeMCU_Studio_2015
             SerialPort.GetInstance().Close();
         }
 
-        private void toolStripOpenConsoleButton_Click(object sender, EventArgs e)
+        private void buttonExecute_Click(object sender, EventArgs e)
         {
-            if (_console != null)
+            var command = textBoxCommand.Text;
+            textBoxCommand.Text = "";
+            new Thread(() =>
             {
-                _console.Activate();
-            }
-            else
+                using (SerialPort.GetInstance().Use())
+                {
+                    try
+                    {
+                        SerialPort.GetInstance().ExecuteAndWait(command);
+                    }
+                    catch (Exception exception)
+                    {
+                        MessageBox.Show(exception.ToString());
+                    }
+                }
+            }).Start();
+        }
+
+        private void toolStripUploadButton_Click(object sender, EventArgs e)
+        {
+            var label = new Label
             {
-                _console = new Console();
-                _console.Closed += delegate { _console = null; };
-                _console.Show();
-            }
-            
+                Left = 16,
+                Top = 20,
+                Width = 240,
+                Text = Resources.please_enter_file_name_to_upload
+            };
+
+            var textBox = new TextBox
+            {
+                Left = 16,
+                Top = 40,
+                Width = 240,
+                TabIndex = 0,
+                TabStop = true
+            };
+
+            var upload = new Button
+            {
+                Left = 75,
+                Width = 80,
+                Top = 80,
+                TabIndex = 1,
+                TabStop = true,
+                Text = "Upload"
+            };
+
+            var prompt = new Form
+            {
+                Width = 280,
+                Height = 160,
+                MinimumSize = new System.Drawing.Size
+                {
+                    Height = 160,
+                    Width = 280
+                },
+                MaximumSize = new System.Drawing.Size
+                {
+                    Height = 160,
+                    Width = 280
+                },
+                Text = "Upload",
+                Controls =
+                {
+                    label,
+                    textBox,
+                    upload
+                },
+                AcceptButton = upload,
+                Icon = Resources.nodemcu
+            };
+
+            upload.Click += delegate (object obj, EventArgs eventArgs)
+            {
+                prompt.Close();
+
+                var s = textBox.Text;
+
+                var index = toolStripComboBoxSerialPort.SelectedIndex;
+                if (index < 0)
+                {
+                    MessageBox.Show(Resources.no_serial_port_selected);
+                    return;
+                }
+
+                var ports = toolStripComboBoxSerialPort.ComboBox?.DataSource as string[];
+
+                if (ports == null) return;
+                var port = ports[index];
+
+                new Thread(() =>
+                {
+                    using (SerialPort.GetInstance().Use())
+                    {
+                        try
+                        {
+                            if (!SerialPort.GetInstance().Open(port))
+                            {
+                                MessageBox.Show(Resources.cannot_connect_to_device);
+                            }
+                            else if (
+                                !SerialPort.GetInstance()
+                                    .ExecuteAndWait(string.Format("file.open(\"{0}\", \"r\")", s)))
+                            {
+                                MessageBox.Show(Resources.uplaod_failed);
+                            }
+                            else
+                            {
+                                var builder = new StringBuilder();
+                                while (true)
+                                {
+                                    var line = SerialPort.GetInstance().ExecuteWaitAndRead("print(file.readline())");
+                                    if (line.Length == 0)
+                                    {
+                                        break;
+                                    }
+                                    builder.Append(line);
+                                }
+
+                                SerialPort.GetInstance()
+                                    .ExecuteAndWait("file.close()");
+
+                                _context.Post(_ =>
+                                {
+                                    CreateTab(null);
+                                    CurrentTb.InsertText(builder.ToString());
+                                }, null);
+                            }
+                        }
+                        catch(Exception exception)
+                        {
+                            MessageBox.Show(Resources.uplaod_failed);
+                        }
+                    }
+                }).Start();
+            };
+
+            prompt.ShowDialog();
         }
     }
 

@@ -84,9 +84,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Console.xaml.cs">
-      <DependentUpon>Console.xaml</DependentUpon>
-    </Compile>
     <Compile Include="PowerfulLuaEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -103,10 +100,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Console.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="StartScreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

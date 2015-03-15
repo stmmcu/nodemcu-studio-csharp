@@ -14,14 +14,14 @@ namespace NodeMCU_Studio_2015
     class SerialPort : IDisposable
     {
         private static SerialPort _instance;
-        private readonly SP _currentSp;
+        public readonly SP CurrentSp;
         private readonly object _lock = new object();
 
         private const int MaxRetries = 100;
 
         private SerialPort()
         {
-            _currentSp = new SP();
+            CurrentSp = new SP();
         }
 
         public string[] GetPortNames()
@@ -31,22 +31,22 @@ namespace NodeMCU_Studio_2015
 
         public void Close()
         {
-            if (_currentSp.IsOpen)
+            if (CurrentSp.IsOpen)
             {
-                _currentSp.Close();
-                IsOpenChanged?.Invoke(_currentSp.IsOpen);
+                CurrentSp.Close();
+                IsOpenChanged?.Invoke(CurrentSp.IsOpen);
             }
         }
 
         public bool Open(string port)
         {
             Close();
-            _currentSp.BaudRate = 9600;
-            _currentSp.ReadTimeout = 0;
-            _currentSp.PortName = port;
-            _currentSp.Open();
-            IsOpenChanged?.Invoke(_currentSp.IsOpen);
-            return _currentSp.IsOpen;
+            CurrentSp.BaudRate = 9600;
+            CurrentSp.ReadTimeout = 0;
+            CurrentSp.PortName = port;
+            CurrentSp.Open();
+            IsOpenChanged?.Invoke(CurrentSp.IsOpen);
+            return CurrentSp.IsOpen;
         }
 
         public IDisposable Use()
@@ -74,10 +74,10 @@ namespace NodeMCU_Studio_2015
 
         public bool ExecuteAndWait(string command)
         {
-            _currentSp.WriteLine(command);
+            CurrentSp.WriteLine(command);
             for (var i = 0;i < MaxRetries;i++)
             {
-                string s = _currentSp.ReadExisting();
+                var s = CurrentSp.ReadExisting();
                 OnDataReceived?.Invoke(s);
                 if (s.Contains(">"))
                 {
@@ -86,6 +86,26 @@ namespace NodeMCU_Studio_2015
                 NativeMethods.Sleep(100);
             }
             return false;
+        }
+
+        public string ExecuteWaitAndRead(string command)
+        {
+            StringBuilder result = new StringBuilder();
+
+            CurrentSp.WriteLine(command);
+            for (var i = 0; i < MaxRetries; i++)
+            {
+                var s = CurrentSp.ReadExisting();
+                result.Append(s);
+                OnDataReceived?.Invoke(s);
+                if (result.ToString().EndsWith("\n> "))
+                {
+                    break;
+                }
+                NativeMethods.Sleep(100);
+            }
+            var str = result.ToString();
+            return str.Substring(command.Length+2, str.Length-4-2-command.Length); // Kill the echo, '\r\n' and '\r\n> '
         }
 
         public static SerialPort GetInstance()
@@ -99,7 +119,7 @@ namespace NodeMCU_Studio_2015
 
         public void Dispose()
         {
-            _currentSp.Dispose();
+            CurrentSp.Dispose();
         }
 
         public event Action<bool> IsOpenChanged;
