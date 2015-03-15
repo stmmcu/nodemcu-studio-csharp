@@ -1,12 +1,6 @@
-﻿using NodeMCU_Studio;
-using System;
-using System.Collections.Generic;
-using System.IO.Ports;
-using System.Linq;
-using System.Runtime.InteropServices;
+﻿using System;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+using System.Threading;
 using SP = System.IO.Ports.SerialPort;
 
 namespace NodeMCU_Studio_2015
@@ -51,7 +45,7 @@ namespace NodeMCU_Studio_2015
 
         public IDisposable Use()
         {
-            System.Threading.Monitor.Enter(_lock);
+            Monitor.Enter(_lock);
             IsWorkingChanged?.Invoke(true);
             return new UnLock(_lock, IsWorkingChanged);
         }
@@ -68,7 +62,7 @@ namespace NodeMCU_Studio_2015
             public void Dispose()
             {
                 _isWorkingChanged?.Invoke(false);
-                System.Threading.Monitor.Exit(_lock);
+                Monitor.Exit(_lock);
             }
         }
 
@@ -110,11 +104,7 @@ namespace NodeMCU_Studio_2015
 
         public static SerialPort GetInstance()
         {
-            if (_instance == null)
-            {
-                _instance = new SerialPort();
-            }
-            return _instance;
+            return _instance ?? (_instance = new SerialPort());
         }
 
         public void Dispose()

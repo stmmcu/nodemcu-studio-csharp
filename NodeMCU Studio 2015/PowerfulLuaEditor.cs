@@ -834,7 +834,7 @@ namespace NodeMCU_Studio_2015
             {
                 highlightCurrentLineToolStripMenuItem.Checked = btHighlightCurrentLine.Checked;
             }
-            else if (sender == invisibleCharsToolStripMenuItem)
+            else if (sender == highlightCurrentLineToolStripMenuItem)
             {
                 btHighlightCurrentLine.Checked = highlightCurrentLineToolStripMenuItem.Checked;
             }
@@ -937,7 +937,7 @@ namespace NodeMCU_Studio_2015
             {
                 showFoldingLineToolStripMenuItem.Checked = btShowFoldingLines.Checked;
             }
-            else if (sender == invisibleCharsToolStripMenuItem)
+            else if (sender == showFoldingLineToolStripMenuItem)
             {
                 btShowFoldingLines.Checked = showFoldingLineToolStripMenuItem.Checked;
             }
@@ -1015,7 +1015,7 @@ namespace NodeMCU_Studio_2015
                                                 line =>
                                                     !SerialPort.GetInstance()
                                                         .ExecuteAndWait(string.Format("file.writeline(\"{0}\")",
-                                                            Escape(line)))))
+                                                            Utilities.Escape(line)))))
                                     {
                                         SerialPort.GetInstance().ExecuteAndWait("file.close()");
                                         MessageBox.Show(Resources.download_to_device_failed);
@@ -1036,38 +1036,6 @@ namespace NodeMCU_Studio_2015
                     }).Start();
                 }
             }
-        }
-
-        private string Escape(string command)
-        {
-            const char backSlash = '\\';
-            const char slash = '/';
-            const char doubleQuote = '"';
-             
-            var output = new StringBuilder(command.Length);
-            foreach (var c in command)
-            {
-                switch (c)
-                {
-                    case backSlash:
-                        output.AppendFormat("{0}{0}", backSlash);
-                        break;
-
-                    case slash:
-                        output.AppendFormat("{0}{1}", backSlash, slash);
-                        break;
-
-                    case doubleQuote:
-                        output.AppendFormat("{0}{1}", backSlash, doubleQuote);
-                        break;
-
-                    default:
-                        output.Append(c);
-                        break;
-                }
-            }
-
-            return output.ToString();
         }
 
         private void RefreshSerialPort()
@@ -1179,7 +1147,7 @@ namespace NodeMCU_Studio_2015
                 Top = 80,
                 TabIndex = 1,
                 TabStop = true,
-                Text = "Upload"
+                Text = Resources.upload_text
             };
 
             var prompt = new Form
@@ -1196,7 +1164,7 @@ namespace NodeMCU_Studio_2015
                     Height = 160,
                     Width = 280
                 },
-                Text = "Upload",
+                Text = Resources.upload_text,
                 Controls =
                 {
                     label,
@@ -1207,7 +1175,7 @@ namespace NodeMCU_Studio_2015
                 Icon = Resources.nodemcu
             };
 
-            upload.Click += delegate (object obj, EventArgs eventArgs)
+            upload.Click += delegate
             {
                 prompt.Close();
 
@@ -1239,7 +1207,7 @@ namespace NodeMCU_Studio_2015
                                 !SerialPort.GetInstance()
                                     .ExecuteAndWait(string.Format("file.open(\"{0}\", \"r\")", s)))
                             {
-                                MessageBox.Show(Resources.uplaod_failed);
+                                MessageBox.Show(Resources.upload_failed);
                             }
                             else
                             {
@@ -1266,7 +1234,7 @@ namespace NodeMCU_Studio_2015
                         }
                         catch(Exception exception)
                         {
-                            MessageBox.Show(Resources.uplaod_failed);
+                            MessageBox.Show(string.Format("{0}, Exception:{1}", Resources.upload_failed, exception));
                         }
                     }
                 }).Start();

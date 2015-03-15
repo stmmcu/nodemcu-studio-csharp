@@ -630,21 +630,30 @@ namespace NodeMCU_Studio_2015.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Upload failed!.
-        /// </summary>
-        internal static string uplaod_failed {
-            get {
-                return ResourceManager.GetString("uplaod_failed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap upload {
             get {
                 object obj = ResourceManager.GetObject("upload", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload failed!.
+        /// </summary>
+        internal static string upload_failed {
+            get {
+                return ResourceManager.GetString("upload_failed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload.
+        /// </summary>
+        internal static string upload_text {
+            get {
+                return ResourceManager.GetString("upload_text", resourceCulture);
             }
         }
     }

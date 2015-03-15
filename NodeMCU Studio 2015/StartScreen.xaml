@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:NodeMCU_Studio_2015"
         mc:Ignorable="d"
         Title="StartingUp"  Height="450" Width="345" Background="#FF008AFF" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None" >
     <Grid Margin="0,0,0.333,0">
@@ -15,14 +14,19 @@
             <RowDefinition Height="17*"/>
             <RowDefinition Height="73*"/>
         </Grid.RowDefinitions>
-        <Image x:Name="PanoramaBackground_png" Margin="0,58.333,-23.667,0.333" Source="PanoramaBackground.png" Stretch="Fill" Grid.ColumnSpan="2" Grid.Row="1"/>
+        <Image x:Name="PanoramaBackgroundPng" Margin="0,58.333,-23.667,0.333" Source="PanoramaBackground.png" Stretch="Fill" Grid.ColumnSpan="2" Grid.Row="1"/>
 
-        <Image x:Name="image" HorizontalAlignment="Left" Height="31" Margin="0,3.333,0,0" VerticalAlignment="Top" Width="35" Source="三角.png" Grid.Row="1" Grid.ColumnSpan="2"/>
-        <Image x:Name="image1" HorizontalAlignment="Left" Height="52" Margin="15,15,0,0" VerticalAlignment="Top" Width="41" Source="nodemcu.ico" Grid.ColumnSpan="2"/>
-        <Label x:Name="label" Content="NodeMCU Studio" HorizontalAlignment="Left" Height="47" Margin="32.333,10,0,0" VerticalAlignment="Top" Width="261" Foreground="White" FontFamily="Tahoma" FontSize="32" Grid.Column="1"/>
-        <Label x:Name="label1" Content="2015 ALPHA  Ver0.5" HorizontalAlignment="Left" Height="34" Margin="21,0.333,0,0" VerticalAlignment="Top" Width="181" FontFamily="Nirmala UI" FontSize="18" Foreground="White" Grid.Row="1" Grid.ColumnSpan="2"/>
-        <Label x:Name="label2" Content="This program is licensed under GNU GPL V3" HorizontalAlignment="Left" Height="31" Margin="20,293.333,0,0" Grid.Row="1" VerticalAlignment="Top" Width="325" Foreground="#FFADDBFE" Grid.ColumnSpan="2"/>
-        <Label x:Name="label2_Copy" Content="IDE for NodeMCU ver. 0.5" HorizontalAlignment="Left" Height="31" Margin="0,315.333,-3.667,0" Grid.Row="1" VerticalAlignment="Top" Width="325" Foreground="#FFADDBFE" Grid.Column="1"/>
+        <Image x:Name="Image" HorizontalAlignment="Left" Height="31" Margin="0,3.333,0,0" VerticalAlignment="Top" Width="35" Source="三角.png" Grid.Row="1" Grid.ColumnSpan="2"
+               Grid.Column="0" />
+        <Image x:Name="Image1" HorizontalAlignment="Left" Height="52" Margin="15,15,0,0" VerticalAlignment="Top" Width="41" Source="nodemcu.ico"
+               Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0" />
+        <Label x:Name="Label" Content="NodeMCU Studio" HorizontalAlignment="Left" Height="47" Margin="32.333,10,0,0" VerticalAlignment="Top" Width="261" Foreground="White" FontFamily="Tahoma" FontSize="32"
+               Grid.Row="0" Grid.Column="1"/>
+        <Label x:Name="Label1" Content="2015 ALPHA  Ver0.5" HorizontalAlignment="Left" Height="34" Margin="21,0.333,0,0" VerticalAlignment="Top" Width="181" FontFamily="Nirmala UI" FontSize="18" Foreground="White" Grid.Row="1" Grid.ColumnSpan="2"
+               Grid.Column="0" />
+        <Label x:Name="Label2" Content="This program is licensed under GNU GPL V3" HorizontalAlignment="Left" Height="31" Margin="20,293.333,0,0" Grid.Row="1" VerticalAlignment="Top" Width="325" Foreground="#FFADDBFE" Grid.ColumnSpan="2"
+               Grid.Column="0" />
+        <Label x:Name="Label2Copy" Content="IDE for NodeMCU ver. 0.5" HorizontalAlignment="Left" Height="31" Margin="0,315.333,-3.667,0" Grid.Row="1" VerticalAlignment="Top" Width="325" Foreground="#FFADDBFE" Grid.Column="1"/>
 
     </Grid>
 </Window>
